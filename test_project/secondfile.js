@@ -1,5 +1,6 @@
 /**
- * @debt {quality} simplicity This file is not easy to understand and needs improvements
+ * @debt {quality} simplicity
+ * Maximet: This file is not easy to understand and needs improvements
  * TODO: add business logic
  */
 
