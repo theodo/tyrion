@@ -4,6 +4,7 @@ import chalk from 'chalk';
 import figlet from 'figlet';
 import program from 'commander';
 import Collector from "./services/collector";
+import Debt from "./model/debt";
 
 console.log(
     chalk.red(
@@ -29,6 +30,6 @@ if (!scanDirectory) {
 
 const collector = new Collector(scanDirectory);
 
-const debtScore = collector.collect();
+const debtPromise = collector.collect();
 
-debtScore.then((debtScore) => console.log('debtScore', debtScore));
+debtPromise.then((debt: Debt) => console.log(debt.displayDebt()));

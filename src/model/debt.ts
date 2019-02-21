@@ -1,14 +1,28 @@
+import DebtItem from "./debtItem";
+import Pricer from "../services/pricer";
+
 export default class Debt {
-    type: string;
-    category: string;
-    description: string;
-    constructor(type: string, category: string, description: string) {
-        this.type = type;
-        this.category = category;
-        this.description = description;
+    debtBag: Array<DebtItem>;
+    pricer: Pricer;
+    constructor() {
+        this.debtBag = new Array<DebtItem>();
+        this.pricer = new Pricer();
     }
 
-    public static buildFromComment(comment: any): Debt {
-        return new Debt(comment.type, comment.name, comment.description);
+    addDebtItem(debtItem: DebtItem): void {
+        this.debtBag.push(debtItem);
+    }
+
+    getScore(): number {
+        let score = 0;
+        for (let debtItem of this.debtBag) {
+            score += this.pricer.getPrice(debtItem);
+        }
+
+        return score;
+    }
+
+    displayDebt(): string {
+        return JSON.stringify({'score': this.getScore()})
     }
 }

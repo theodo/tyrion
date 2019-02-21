@@ -1,4 +1,4 @@
-import Pricer from "./pricer";
+import DebtItem from "../model/debtItem";
 import Debt from "../model/debt";
 
 const glob = require("glob");
@@ -6,31 +6,29 @@ const parser = require("comment-parser");
 
 export default class Collector {
     scanningPath: string;
-    debtScore: number;
-    pricer: Pricer;
+    debt: Debt;
     constructor(scanningPath: string) {
         this.scanningPath = scanningPath;
-        this.pricer = new Pricer();
-        this.debtScore = 0;
+        this.debt = new Debt();
     }
 
-    async collect(): Promise<number> {
+    async collect(): Promise<Debt> {
         /**
-         * @debt {bug} potential
+         * @debt {bug-risk} potential
          * Maximet: create a safer way of constructing the pattern string
          */
         const searchPattern = this.scanningPath + '/**/*.*';
 
         const files = glob.sync(searchPattern);
 
-        for (let file of files) {
+        for (let fileName of files) {
             try {
-                const data = await this.parserFileWrapper(file);
-                this.parseCommentsFromFile(data);
+                const data = await this.parserFileWrapper(fileName);
+                this.parseCommentsFromFile(data, fileName);
             } catch (error) {}
         }
 
-        return this.debtScore;
+        return this.debt;
     }
 
     private async parserFileWrapper(file: string) {
@@ -41,12 +39,12 @@ export default class Collector {
         });
     }
 
-    private parseCommentsFromFile(data: any): void {
+    private parseCommentsFromFile(data: any,fileName: string): void {
         for (let commentBlock of data) {
             for (let comment of commentBlock.tags) {
                 if (comment.tag.toLowerCase() === 'debt') {
-                    const debt = Debt.buildFromComment(comment);
-                    this.debtScore += this.pricer.getPrice(debt);
+                    const debtItem = DebtItem.buildFromComment(comment, fileName);
+                    this.debt.addDebtItem(debtItem);
                 }
             }
         }

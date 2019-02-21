@@ -41,6 +41,7 @@ Tyrion parses the files looking for comments that follows the following conventi
 ````
 DEBT_TYPE should be of one of the following:
 
+* architecture
 * bug
 * bug-risk
 * security
@@ -67,6 +68,8 @@ Complete example:
  * Maximet: The request is not escaped when being called from the command.
  */
 ````
+
+⚠ Only the comment starting with /** will work as we are using the [comment-parser](https://github.com/yavorskiy/comment-parser) library.
 
 ## Contribute
 
