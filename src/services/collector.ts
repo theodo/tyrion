@@ -2,7 +2,7 @@ import DebtItem from "../model/debtItem";
 import Debt from "../model/debt";
 
 const glob = require("glob");
-const parser = require("comment-parser");
+const fs = require('fs');
 
 export default class Collector {
     scanningPath: string;
@@ -14,8 +14,7 @@ export default class Collector {
 
     async collect(): Promise<Debt> {
         /**
-         * @debt {bug-risk} potential
-         * Maximet: create a safer way of constructing the pattern string
+         * @debt bug-risk:path "Maximet: create a safer way of constructing the pattern string"
          */
         const allNotHiddenFiles = this.scanningPath + '/**/*.*';
         const notHiddenFiles = glob.sync(allNotHiddenFiles);
@@ -26,31 +25,36 @@ export default class Collector {
         const allFiles = notHiddenFiles.concat(hiddenFiles);
 
         for (let fileName of allFiles) {
-            try {
-                const data = await this.parserFileWrapper(fileName);
-                this.parseCommentsFromFile(data, fileName);
-            } catch (error) {}
+            let lines:Array<string> = fs.readFileSync(fileName, 'utf-8').split('\n');
+
+            /**
+             * @debt bug-risk:detection "Maximet: check if the line is a comment or not to avoid wrong debt detection"
+             */
+            lines = lines.filter(line => line.indexOf('@debt') >= 0);
+
+            for (let line of lines) {
+                const debtItem = this.parseDebtItemFromDebtLine(line, fileName);
+                this.debt.addDebtItem(debtItem);
+            }
         }
 
         return this.debt;
     }
 
-    private async parserFileWrapper(file: string) {
-        return new Promise((resolve) => {
-            parser.file(file, (str: any, data: any) => {
-                resolve(data);
-            });
-        });
-    }
+    private parseDebtItemFromDebtLine(line:string, fileName: string): DebtItem {
+        const lineWithoutDebt = line.substr(line.indexOf('@debt') + 6);
+        const indexOfComment = lineWithoutDebt.indexOf('"');
+        const debtTypesExpression = lineWithoutDebt.substr(0, indexOfComment).trim();
+        const types = debtTypesExpression.split(':');
 
-    private parseCommentsFromFile(data: any,fileName: string): void {
-        for (let commentBlock of data) {
-            for (let comment of commentBlock.tags) {
-                if (comment.tag.toLowerCase() === 'debt') {
-                    const debtItem = DebtItem.buildFromComment(comment, fileName);
-                    this.debt.addDebtItem(debtItem);
-                }
-            }
+        const debtType = types[0];
+        const debtCategory = types[1] ? types[1] : '';
+
+        let comment = line.substr(line.indexOf('"') + 1);
+        if (comment.indexOf('"') >= 0) {
+            comment = comment.substr(0, comment.indexOf('"'));
         }
+
+        return new DebtItem(debtType, debtCategory, comment, fileName);
     }
 }

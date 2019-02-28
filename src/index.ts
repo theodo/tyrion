@@ -13,10 +13,8 @@ console.log(
 );
 
 program
-    .version('0.0.1')
     .description("A debt collector from human comments in the code")
     .option('-p, --path [scanDirectory]', 'The path of the directory you want to analyse')
-    .option('-j, --json', 'The output will be a json string')
     .parse(process.argv);
 
 console.info(program.helpInformation());
