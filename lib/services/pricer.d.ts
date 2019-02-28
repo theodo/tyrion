@@ -1,7 +1,7 @@
-import Debt from "../model/debt";
-export default class Pricer {
+import DebtItem from "../model/debtItem";
+export declare class Pricer {
     /**
      * @param debt
      */
-    getPrice(debt: Debt): number;
+    static getPrice(debt: DebtItem): number;
 }

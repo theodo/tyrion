@@ -1,7 +1,9 @@
+import DebtItem from "./debtItem";
+import DebtPareto from "./debtPareto";
 export default class Debt {
-    type: string;
-    category: string;
-    description: string;
-    constructor(type: string, category: string, description: string);
-    static buildFromComment(comment: any): Debt;
+    debtParetos: Map<string, DebtPareto>;
+    private debtScore;
+    constructor();
+    addDebtItem(debtItem: DebtItem): void;
+    getWholeDebtInformation(): string;
 }

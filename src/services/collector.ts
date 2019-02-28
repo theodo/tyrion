@@ -30,7 +30,7 @@ export default class Collector {
             /**
              * @debt bug-risk:detection "Maximet: check if the line is a comment or not to avoid wrong debt detection"
              */
-            lines = lines.filter(line => line.indexOf('@debt') >= 0);
+            lines = lines.filter(line => line.indexOf('@debt') >= 0 && this.checkIfLineIsAComment(line));
 
             for (let line of lines) {
                 const debtItem = this.parseDebtItemFromDebtLine(line, fileName);
@@ -39,6 +39,13 @@ export default class Collector {
         }
 
         return this.debt;
+    }
+
+    private checkIfLineIsAComment(line:string): boolean {
+        const lineTrimed = line.trim();
+        const firstChar = lineTrimed.charAt(0);
+
+        return firstChar === '#' ||  firstChar === '*';
     }
 
     private parseDebtItemFromDebtLine(line:string, fileName: string): DebtItem {

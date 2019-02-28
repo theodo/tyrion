@@ -1,10 +1,9 @@
-import Pricer from "./pricer";
+import Debt from "../model/debt";
 export default class Collector {
     scanningPath: string;
-    debtScore: number;
-    pricer: Pricer;
+    debt: Debt;
     constructor(scanningPath: string);
-    collect(): Promise<number>;
-    private parserFileWrapper;
-    private parseCommentsFromFile;
+    collect(): Promise<Debt>;
+    private checkIfLineIsAComment;
+    private parseDebtItemFromDebtLine;
 }

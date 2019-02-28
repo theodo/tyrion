@@ -22,9 +22,7 @@ TODO
 Run `tyrion` with the following options
 
 ````
-  -V, --version  output the version number
   -p, --path     The path of the directory you want to analyse
-  -j, --json     The output will be a json string
   -h, --help     output usage information
 ````
 
@@ -36,10 +34,10 @@ Tyrion parses the files looking for comments that follows the following conventi
 
 ````
 /**
- * @debt {DEBT_TYPE} SUB_TYPE
+ * @debt DEBT_TYPE:SUB_TYPE
  */
 ````
-DEBT_TYPE should be of one of the following:
+There is default score for the following DEBT_TYPE:
 
 * architecture
 * bug
@@ -53,23 +51,29 @@ DEBT_TYPE should be of one of the following:
 * deploy
 * dev-env
 
-A minimum example:
+You don't need to specify a SUB_TYPE, so a minimum example can be:
 ````
 /**
- * @debt {quality} naming
+ * @debt quality
  */
 ````
 
+You can add a comment to explain more the debt item by following this convention:
 
-Complete example:
 ````
 /**
- * @debt {security} sql-injection
- * Maximet: The request is not escaped when being called from the command.
+ * @debt DEBT_TYPE:SUB_TYPE "Author: comment"
  */
 ````
 
-⚠ Only the comment starting with /** will work as we are using the [comment-parser](https://github.com/yavorskiy/comment-parser) library.
+A complete example could be:
+````
+/**
+ * @debt security:sql-injection "Maximet: The request is not escaped when being called from the command"
+ */
+````
+
+The parser will look for all line containing '@debt' and starting either by `*` or `#` which cover most web programing language.
 
 ## Contribute
 
