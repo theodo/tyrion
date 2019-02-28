@@ -1,10 +1,10 @@
 import DebtItem from "../model/debtItem";
 
-export default class Pricer {
+export class Pricer {
     /**
      * @param debt
      */
-    getPrice(debt: DebtItem): number {
+    static getPrice(debt: DebtItem): number {
         switch (debt.type) {
             case 'bug': return 100;
             case 'architecture': return 100;

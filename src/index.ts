@@ -32,4 +32,6 @@ const collector = new Collector(scanDirectory);
 
 const debtPromise = collector.collect();
 
-debtPromise.then((debt: Debt) => console.log(debt.displayDebt()));
+debtPromise.then((debt: Debt) => {
+    console.log(debt.getWholeDebtInformation());
+});

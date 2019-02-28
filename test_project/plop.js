@@ -5,13 +5,11 @@
  * @debt {quality} simplicity
  * Maximet: The purpose of this SQL query is hard to understand
  */
-
 mysql("delete * from $input");
-
 
 /**
  * @debt {quality} naming
  */
-myVeryNotWellNamedFunction(data){
+function myVeryNotWellNamedFunction(data){
     return 4;
 }

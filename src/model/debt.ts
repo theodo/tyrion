@@ -1,28 +1,36 @@
 import DebtItem from "./debtItem";
-import Pricer from "../services/pricer";
+import { Pricer } from "../services/pricer";
+import DebtPareto from "./debtPareto";
 
 export default class Debt {
-    debtBag: Array<DebtItem>;
-    pricer: Pricer;
+    debtParetos: Map<string, DebtPareto>;
+    private debtScore: number;
+
     constructor() {
-        this.debtBag = new Array<DebtItem>();
-        this.pricer = new Pricer();
+        this.debtParetos = new Map<string, DebtPareto>();
+        this.debtScore = 0;
     }
 
     addDebtItem(debtItem: DebtItem): void {
-        this.debtBag.push(debtItem);
-    }
+        this.debtScore += Pricer.getPrice(debtItem);
 
-    getScore(): number {
-        let score = 0;
-        for (let debtItem of this.debtBag) {
-            score += this.pricer.getPrice(debtItem);
+        let debtPareto = this.debtParetos.get(debtItem.type);
+        if (debtPareto instanceof DebtPareto) {
+            debtPareto.addDebtItem(debtItem);
+        } else {
+           debtPareto = new DebtPareto(debtItem.type);
+           debtPareto.addDebtItem(debtItem);
+           this.debtParetos.set(debtItem.type, debtPareto);
         }
-
-        return score;
     }
 
-    displayDebt(): string {
-        return JSON.stringify({'score': this.getScore()})
+    getWholeDebtInformation(): string {
+
+        let wholeDebtInformation = {
+            'score': this.debtScore,
+            'paretos': Array.from(this.debtParetos.values()),
+        };
+
+        return JSON.stringify(wholeDebtInformation);
     }
 }
