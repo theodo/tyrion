@@ -15,7 +15,7 @@ As the information will be directly in the code, it will be very easy to add, up
 
 ## Installation:
 
-TODO
+Install Tyrion globally: `npm i -g tyrionl`
 
 ## Usage:
 
@@ -23,7 +23,8 @@ Run `tyrion` with the following options
 
 ````
   -p, --path     The path of the directory you want to analyse
-  -h, --help     output usage information
+  -j, --json     Limit the output to the json result
+  -h, --help     Output usage information
 ````
 
 Example: `tyrion -p ./src`

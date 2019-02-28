@@ -1,6 +1,6 @@
 {
   "name": "tyrionl",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "technical debt collector tool",
   "main": "./lib/index.js",
   "bin": {
@@ -10,7 +10,7 @@
     "tsc": "tsc",
     "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
     "build": "tsc -p .",
-    "test": "npm run build && sudo npm i -g && tyrion -p ./test_project",
+    "test": "npm run build && sudo npm i -g && tyrion",
     "refresh": "rm -rf ./node_modules ./package-lock.json && npm install"
   },
   "author": "Maxime Thoonsen",
