@@ -14,11 +14,10 @@ program
 
 if (!program.json){
     console.log(
-        chalk.red(
+        chalk.green(
             figlet.textSync('TYRION', { horizontalLayout: 'full' })
         )
     );
-
     console.info(program.helpInformation());
 }
 
