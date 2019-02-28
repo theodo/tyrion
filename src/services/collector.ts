@@ -13,14 +13,11 @@ export default class Collector {
     }
 
     async collect(): Promise<Debt> {
-        /**
-         * @debt bug-risk:path "Maximet: create a safer way of constructing the pattern string"
-         */
         const allNotHiddenFiles = this.scanningPath + '/**/*.*';
-        const notHiddenFiles = glob.sync(allNotHiddenFiles);
+        const notHiddenFiles = glob.sync(allNotHiddenFiles, {'nodir': true});
 
         const allHiddenFiles = this.scanningPath + '/**/.*';
-        const hiddenFiles = glob.sync(allHiddenFiles);
+        const hiddenFiles = glob.sync(allHiddenFiles, {'nodir': true});
 
         const allFiles = notHiddenFiles.concat(hiddenFiles);
 
