@@ -17,6 +17,7 @@ export class Pricer {
             case 'ci': return 30;
             case 'deploy': return 10;
             case 'dev-env': return 10;
+            case 'outdated': return 5; // When we use a dependency that is outdated
         }
 
        return 1;

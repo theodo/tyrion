@@ -17,11 +17,15 @@ export default class Collector {
          * @debt {bug-risk} potential
          * Maximet: create a safer way of constructing the pattern string
          */
-        const searchPattern = this.scanningPath + '/**/*.*';
+        const allNotHiddenFiles = this.scanningPath + '/**/*.*';
+        const notHiddenFiles = glob.sync(allNotHiddenFiles);
 
-        const files = glob.sync(searchPattern);
+        const allHiddenFiles = this.scanningPath + '/**/.*';
+        const hiddenFiles = glob.sync(allHiddenFiles);
 
-        for (let fileName of files) {
+        const allFiles = notHiddenFiles.concat(hiddenFiles);
+
+        for (let fileName of allFiles) {
             try {
                 const data = await this.parserFileWrapper(fileName);
                 this.parseCommentsFromFile(data, fileName);
