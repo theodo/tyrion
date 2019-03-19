@@ -42,7 +42,7 @@ export default class Collector {
         const lineTrimed = line.trim();
         const firstChar = lineTrimed.charAt(0);
 
-        return firstChar === '#' ||  firstChar === '*';
+        return firstChar === '#' ||  firstChar === '*' ||  firstChar === '/';
     }
 
     private parseDebtItemFromDebtLine(line:string, fileName: string): DebtItem {
