@@ -1,15 +1,19 @@
 import DebtItem from "../model/debtItem";
 import Debt from "../model/debt";
+import {Commit, TreeEntry} from "nodegit";
+import {HistoryEventEmitter} from "nodegit/commit";
+import DebtHistory from "../model/debtHistory";
+import dateHelper from "../utils/dateHelper";
 
 const glob = require("glob");
 const fs = require('fs');
+const nodeGit = require("nodegit");
+const path = require("path");
 
 export default class Collector {
     scanningPath: string;
-    debt: Debt;
     constructor(scanningPath: string) {
         this.scanningPath = scanningPath;
-        this.debt = new Debt();
     }
 
     async collect(): Promise<Debt> {
@@ -20,22 +24,113 @@ export default class Collector {
         const hiddenFiles = glob.sync(allHiddenFiles, {'nodir': true});
 
         const allFiles = notHiddenFiles.concat(hiddenFiles);
+        const debt = new Debt();
 
         for (let fileName of allFiles) {
-            let lines:Array<string> = fs.readFileSync(fileName, 'utf-8').split('\n');
-
-            /**
-             * @debt bug-risk:detection "Maximet: check if the line is a comment or not to avoid wrong debt detection"
-             */
-            lines = lines.filter(line => line.indexOf('@debt') >= 0 && this.checkIfLineIsAComment(line));
-
-            for (let line of lines) {
-                const debtItem = this.parseDebtItemFromDebtLine(line, fileName);
-                this.debt.addDebtItem(debtItem);
-            }
+            const file = fs.readFileSync(fileName, 'utf-8');
+            this.parseFile(file, fileName, debt);
         }
 
-        return this.debt;
+        return debt;
+    }
+
+    async collectHistory(): Promise<DebtHistory> {
+        const debtHistory = new DebtHistory();
+        const repository = await nodeGit.Repository.open(path.resolve(this.scanningPath));
+        const firstCommitOnMaster = await repository.getMasterCommit();
+        const history = firstCommitOnMaster.history();
+        const commits = await this.getRelevantCommit(firstCommitOnMaster, history);
+
+        for (let commit of commits) {
+            const debt = await this.collectDebtFromCommit(commit);
+            debt.commitDateTime = commit.date();
+            debtHistory.addDebt(debt);
+        }
+
+        return debtHistory;
+    }
+
+    private async getRelevantCommit(firstCommit: Commit, history: HistoryEventEmitter): Promise<Array<Commit>> {
+        return new Promise((resolve) => {
+            history.on("end", function(commits: Array<Commit>) {
+                // We select one commit per day, the first one we meet
+                const startDate = firstCommit.date();
+                const startDateTime = startDate.getTime();
+                // @debt quality:variable "Maximet: We should create a const somewhere"
+                const endDateTime = startDateTime - 28 * 24 * 3600000;
+
+                const relevantCommits = new Map<string,Commit>();
+                for (let commit of commits){
+                    if (commit.date().getTime() < endDateTime){
+                        break;
+                    }
+
+                    const formattedDate = dateHelper.getDayMonthYearFormat(commit.date());
+                    const commitOfTheDay = relevantCommits.get(formattedDate);
+                    if (!commitOfTheDay) {
+                        relevantCommits.set(formattedDate, commit);
+                    }
+                }
+                return resolve(Array.from(relevantCommits.values()));
+            });
+
+            history.start();
+        });
+    }
+
+    private async collectDebtFromCommit(commit:Commit): Promise<Debt> {
+        const debt = new Debt();
+        const entries = await this.getFilesFromCommit(commit);
+        for (let entry of entries) {
+            await this.parseEntry(entry, debt);
+        }
+
+        return debt;
+    }
+
+    private async getFilesFromCommit(commit:Commit): Promise<Array<TreeEntry>> {
+        return new Promise((resolve) => {
+            const tree = commit.getTree();
+            tree.then(function (tree:any) {
+                const walker = tree.walk(true);
+                const entryArray = Array<TreeEntry>();
+                walker.on("entry", function (entry: TreeEntry) {
+                    entryArray.push(entry);
+                });
+
+                walker.on("end", function (entries: Array<TreeEntry>) {
+                    return resolve(entryArray);
+                });
+                // Don't forget to call `start()`!
+                walker.start();
+            });
+        });
+    }
+
+    private async parseEntry(entry: TreeEntry, debt: Debt): Promise<void> {
+        const those = this;
+        return new Promise((resolve => {
+            const blob = entry.getBlob();
+            blob
+            .then(function (blob) {
+                those.parseFile(String(blob), entry.path(), debt);
+                resolve();
+            })
+            .catch((reason => console.error('Error while parsing the blob of the file', reason)));
+        }))
+    }
+
+    private parseFile(file: string, fileName: string, debt: Debt): void {
+        let lines:Array<string> = file.split('\n');
+        /**
+         * @debt bug-risk:detection "Maximet: check if the line is a comment or not to avoid wrong debt detection"
+         */
+        lines = lines.filter(line => line.indexOf('@debt') >= 0 && this.checkIfLineIsAComment(line));
+
+        for (let line of lines) {
+            const debtItem = this.parseDebtItemFromDebtLine(line, fileName);
+            debt.addDebtItem(debtItem);
+        }
     }
 
     private checkIfLineIsAComment(line:string): boolean {

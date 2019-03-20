@@ -22,12 +22,16 @@ Install Tyrion globally: `npm i -g tyrionl`
 Run `tyrion` with the following options
 
 ````
-  -p, --path     The path of the directory you want to analyse
-  -j, --json     Limit the output to the json result
-  -h, --help     Output usage information
+  -p, --path [scanDirectory]  The path of the directory you want to analyse
+  -e, --evolution             Get the evolution of the debt
+  -j, --json                  Limit the output to the json result
+  -h, --help                  output usage information
 ````
 
-Example: `tyrion -p ./src`
+Example:
+
+- `tyrion -p ./src` to get the current debt score
+- `tyrion --evolution --json -p .` to get the evolution of the debt during 28 days starting from the last commit.
 
 ## Writing debt comment
 

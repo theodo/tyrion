@@ -4,7 +4,9 @@ import DebtPareto from "./debtPareto";
 
 export default class Debt {
     debtParetos: Map<string, DebtPareto>;
-    private debtScore: number;
+    commitDateTime: Date = new Date();
+
+    debtScore: number;
 
     constructor() {
         this.debtParetos = new Map<string, DebtPareto>();
