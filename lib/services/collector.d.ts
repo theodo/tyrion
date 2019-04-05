@@ -4,7 +4,7 @@ export default class Collector {
     scanningPath: string;
     constructor(scanningPath: string);
     collect(): Promise<Debt>;
-    collectHistory(): Promise<DebtHistory>;
+    collectHistory(historyNumberOfDays: number): Promise<DebtHistory>;
     private getRelevantCommit;
     private collectDebtFromCommit;
     private getFilesFromCommit;
