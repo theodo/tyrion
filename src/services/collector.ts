@@ -4,11 +4,11 @@ import {Commit, TreeEntry} from "nodegit";
 import {HistoryEventEmitter} from "nodegit/commit";
 import DebtHistory from "../model/debtHistory";
 import dateHelper from "../utils/dateHelper";
+import fs from 'fs';
+import path from 'path';
 
 const glob = require("glob");
-const fs = require('fs');
 const nodeGit = require("nodegit");
-const path = require("path");
 
 export default class Collector {
     scanningPath: string;
@@ -34,12 +34,12 @@ export default class Collector {
         return debt;
     }
 
-    async collectHistory(): Promise<DebtHistory> {
+    async collectHistory(historyNumberOfDays: number): Promise<DebtHistory> {
         const debtHistory = new DebtHistory();
         const repository = await nodeGit.Repository.open(path.resolve(this.scanningPath));
         const firstCommitOnMaster = await repository.getMasterCommit();
         const history = firstCommitOnMaster.history();
-        const commits = await this.getRelevantCommit(firstCommitOnMaster, history);
+        const commits = await this.getRelevantCommit(firstCommitOnMaster, history, historyNumberOfDays);
 
         for (let commit of commits) {
             const debt = await this.collectDebtFromCommit(commit);
@@ -50,14 +50,16 @@ export default class Collector {
         return debtHistory;
     }
 
-    private async getRelevantCommit(firstCommit: Commit, history: HistoryEventEmitter): Promise<Array<Commit>> {
+    private async getRelevantCommit(firstCommit: Commit, history: HistoryEventEmitter, historyNumberOfDays: number): Promise<Array<Commit>> {
         return new Promise((resolve) => {
             history.on("end", function(commits: Array<Commit>) {
                 // We select one commit per day, the first one we meet
                 const startDate = firstCommit.date();
                 const startDateTime = startDate.getTime();
                 // @debt quality:variable "Maximet: We should create a const somewhere"
-                const endDateTime = startDateTime - 28 * 24 * 3600000;
+
+                const NUMBER_OF_DAYS_TO_BUILD_HISTORY = historyNumberOfDays * 24 * 3600000;
+                const endDateTime = startDateTime - NUMBER_OF_DAYS_TO_BUILD_HISTORY;
 
                 const relevantCommits = new Map<string,Commit>();
                 for (let commit of commits){

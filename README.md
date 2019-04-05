@@ -23,7 +23,7 @@ Run `tyrion` with the following options
 
 ````
   -p, --path [scanDirectory]  The path of the directory you want to analyse
-  -e, --evolution             Get the evolution of the debt
+  -e, --evolution [days]      Get the evolution of the debt since X days
   -j, --json                  Limit the output to the json result
   -h, --help                  output usage information
 ````

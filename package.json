@@ -29,6 +29,7 @@
     "path": "^0.12.7"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.123",
     "@types/node": "^11.9.5",
     "nodemon": "^1.18.10",
     "ts-node": "^8.0.2",

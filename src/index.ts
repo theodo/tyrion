@@ -6,11 +6,14 @@ import program from 'commander';
 import Collector from "./services/collector";
 import Debt from "./model/debt";
 import DebtHistory from "./model/debtHistory";
+import TemplateRenderer from "./services/templateRenderer";
+
+const HISTORY_DEFAULT_NUMBER_OF_DAYS = 28;
 
 program
     .description("A debt collector from human comments in the code")
     .option('-p, --path [scanDirectory]', 'The path of the directory you want to analyse')
-    .option('-e, --evolution', 'Get the evolution of the debt')
+    .option('-e, --evolution [days]', 'Get the evolution of the debt since X days')
     .option('-j, --json', 'Limit the output to the json result')
     .parse(process.argv);
 
@@ -33,9 +36,10 @@ if (!scanDirectory) {
 const collector = new Collector(scanDirectory);
 
 if (program.evolution){
-    const debtHistory = collector.collectHistory();
+    const historyNumberOfDays = program.evolution ? program.evolution : HISTORY_DEFAULT_NUMBER_OF_DAYS;
+    const debtHistory = collector.collectHistory(historyNumberOfDays);
     debtHistory.then((debtHistory: DebtHistory) => {
-        console.log(debtHistory.getWholeDebtInformation());
+        TemplateRenderer.renderHtmlGraph(debtHistory);
     });
 } else {
     const debtPromise = collector.collect();
