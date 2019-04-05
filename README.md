@@ -31,7 +31,7 @@ Run `tyrion` with the following options
 Example:
 
 - `tyrion -p ./src` to get the current debt score
-- `tyrion --evolution --json -p .` to get the evolution of the debt during 28 days starting from the last commit.
+- `tyrion --evolution 28 --json -p .` to get the evolution of the debt during 28 days starting from the last commit.
 
 ## Writing debt comment
 
