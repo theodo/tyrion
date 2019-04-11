@@ -36,7 +36,19 @@ export default class Collector {
 
     async collectHistory(historyNumberOfDays: number): Promise<DebtHistory> {
         const debtHistory = new DebtHistory();
-        const repository = await nodeGit.Repository.open(path.resolve(this.scanningPath));
+
+        let repositoryPath;
+
+        try {
+            repositoryPath = await nodeGit.Repository.discover(path.resolve(this.scanningPath), 0, '');
+
+            console.info('Start reading the history for the repository: ' + repositoryPath);
+
+        } catch (error) {
+            throw new Error('No GIT repository was found');
+        }
+
+        const repository = await nodeGit.Repository.open(repositoryPath);
         const firstCommitOnMaster = await repository.getMasterCommit();
         const history = firstCommitOnMaster.history();
         const commits = await this.getRelevantCommit(firstCommitOnMaster, history, historyNumberOfDays);
