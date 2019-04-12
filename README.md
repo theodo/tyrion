@@ -41,7 +41,7 @@ Tyrion parses the files looking for comments that follows the following conventi
  * @debt DEBT_TYPE:SUB_TYPE
  */
 ````
-There is default score for the following DEBT_TYPE:
+There is a default score for the following DEBT_TYPE:
 
 * architecture
 * bug
@@ -62,7 +62,7 @@ You don't need to specify a SUB_TYPE, so a minimum example can be:
  */
 ````
 
-You can add a comment to explain more the debt item by following this convention:
+You can add a comment to provide more details about the debt item by following this convention:
 
 ````
 /**
@@ -77,7 +77,7 @@ A complete example could be:
  */
 ````
 
-The parser will look for all line containing '@debt' and starting either by `*` or `#` which cover most web programing language.
+The parser will look for all lines containing '@debt' and starting either by `*` or `#` which should cover most web programing languages.
 
 ## Contribute
 
