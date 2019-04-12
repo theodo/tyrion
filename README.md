@@ -15,7 +15,7 @@ As the information will be directly in the code, it will be very easy to add, up
 
 ## Installation:
 
-Install Tyrion globally: `npm i -g tyrionl`
+Install Tyrion globally: `npm i -g tyrionl` (yes, `tyrionl` with a final `l`, it's not a typo).
 
 ## Usage:
 
