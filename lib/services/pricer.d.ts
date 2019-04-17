@@ -1,7 +1,11 @@
 import DebtItem from "../model/debtItem";
 export declare class Pricer {
+    private prices;
+    private path;
+    constructor(path: string);
     /**
      * @param debt
      */
-    static getPrice(debt: DebtItem): number;
+    getPrice(debt: DebtItem): number;
+    private setPricingConfig;
 }

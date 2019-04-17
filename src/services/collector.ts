@@ -6,14 +6,17 @@ import DebtHistory from "../model/debtHistory";
 import dateHelper from "../utils/dateHelper";
 import fs from 'fs';
 import path from 'path';
+import {Pricer} from "./pricer";
 
 const glob = require("glob");
 const nodeGit = require("nodegit");
 
 export default class Collector {
     scanningPath: string;
+    pricer: Pricer;
     constructor(scanningPath: string) {
         this.scanningPath = scanningPath;
+        this.pricer = new Pricer(scanningPath);
     }
 
     async collect(): Promise<Debt> {
@@ -24,7 +27,7 @@ export default class Collector {
         const hiddenFiles = glob.sync(allHiddenFiles, {'nodir': true});
 
         const allFiles = notHiddenFiles.concat(hiddenFiles);
-        const debt = new Debt();
+        const debt = new Debt(this.pricer);
 
         for (let fileName of allFiles) {
             const file = fs.readFileSync(fileName, 'utf-8');
@@ -93,7 +96,7 @@ export default class Collector {
     }
 
     private async collectDebtFromCommit(commit:Commit): Promise<Debt> {
-        const debt = new Debt();
+        const debt = new Debt(this.pricer);
         const entries = await this.getFilesFromCommit(commit);
         for (let entry of entries) {
             await this.parseEntry(entry, debt);

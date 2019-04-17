@@ -5,22 +5,24 @@ import DebtPareto from "./debtPareto";
 export default class Debt {
     debtParetos: Map<string, DebtPareto>;
     commitDateTime: Date = new Date();
-
     debtScore: number;
 
-    constructor() {
+    private pricer: Pricer;
+
+    constructor(pricer: Pricer) {
         this.debtParetos = new Map<string, DebtPareto>();
         this.debtScore = 0;
+        this.pricer = pricer;
     }
 
     addDebtItem(debtItem: DebtItem): void {
-        this.debtScore += Pricer.getPrice(debtItem);
+        this.debtScore += this.pricer.getPrice(debtItem);
 
         let debtPareto = this.debtParetos.get(debtItem.type);
         if (debtPareto instanceof DebtPareto) {
             debtPareto.addDebtItem(debtItem);
         } else {
-           debtPareto = new DebtPareto(debtItem.type);
+           debtPareto = new DebtPareto(debtItem.type, this.pricer);
            debtPareto.addDebtItem(debtItem);
            this.debtParetos.set(debtItem.type, debtPareto);
         }
