@@ -79,6 +79,28 @@ A complete example could be:
 
 The parser will look for all lines containing '@debt' and starting either by `*` or `#` which should cover most web programing languages.
 
+## Writing debt comment
+
+You can override the default pricing of debt items by creating a `.tyrion-config.json` file in the root directory of your project. You can even create your own types. Here is the default one:
+````
+{
+  "pricer": {
+    "bug": "100",
+    "architecture": "100",
+    "bug-risk": "5",
+    "security": "100",
+    "security-risk": "10",
+    "quality": "5",
+    "test": "5",
+    "doc": "3",
+    "ci": "30",
+    "deploy": "10",
+    "dev-env": "10",
+    "outdated": "5"
+  }
+}
+````
+
 ## Contribute
 
 1. Install the dependencies `npm i`
