@@ -6,15 +6,17 @@ export default class DebtPareto {
     type: string;
 
     private debtScore: number;
+    private pricer: Pricer;
 
-    constructor(type: string) {
+    constructor(type: string, pricer: Pricer) {
         this.type = type;
         this.debtItems = new Array<DebtItem>();
         this.debtScore = 0;
+        this.pricer = pricer;
     }
 
     addDebtItem(debtItem: DebtItem): void {
         this.debtItems.push(debtItem);
-        this.debtScore += Pricer.getPrice(debtItem);
+        this.debtScore += this.pricer.getPrice(debtItem);
     }
 }

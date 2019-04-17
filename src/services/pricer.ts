@@ -1,25 +1,44 @@
 import DebtItem from "../model/debtItem";
+import fs from "fs";
+import path from "path";
 
 export class Pricer {
+    private prices: any;
+    private path: string;
+
+    constructor(path:string) {
+        this.prices = null;
+        this.path = path;
+    }
+
     /**
      * @param debt
      */
-    static getPrice(debt: DebtItem): number {
-        switch (debt.type) {
-            case 'bug': return 100;
-            case 'architecture': return 100;
-            case 'bug-risk': return 5;
-            case 'security': return 100;
-            case 'security-risk': return 10;
-            case 'quality': return 5;
-            case 'test': return 5;
-            case 'doc': return 3;
-            case 'ci': return 30;
-            case 'deploy': return 10;
-            case 'dev-env': return 10;
-            case 'outdated': return 5; // When we use a dependency that is outdated
+    getPrice(debt: DebtItem): number {
+
+        if (!this.prices) {
+            this.setPricingConfig();
         }
 
-       return 1;
+        const price = this.prices[debt.type] ? this.prices[debt.type] : 1;
+
+        return parseInt(price);
+    }
+
+    private setPricingConfig() {
+        const defaultConfigFile = fs.readFileSync(path.resolve(__dirname, '../../.tyrion-config.json'), 'utf-8');
+        const defaultConfig = JSON.parse(defaultConfigFile);
+
+        const projectConfigPath = this.path + '/.tyrion-config.json';
+
+        if (fs.existsSync(projectConfigPath)) {
+            const configFile = fs.readFileSync(projectConfigPath, 'utf-8');
+            const config = JSON.parse(configFile.toString());
+            this.prices = Object.assign(defaultConfig.pricer, config.pricer);
+        } else {
+            this.prices = defaultConfig.pricer;
+        }
+
+        console.log('Here are the pricing for each debt item of your project:', this.prices);
     }
 }

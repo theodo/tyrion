@@ -14,17 +14,15 @@ program
     .description("A debt collector from human comments in the code")
     .option('-p, --path [scanDirectory]', 'The path of the directory you want to analyse')
     .option('-e, --evolution [days]', 'Get the evolution of the debt since X days')
-    .option('-j, --json', 'Limit the output to the json result')
     .parse(process.argv);
 
-if (!program.json){
-    console.log(
-        chalk.green(
-            figlet.textSync('TYRION', { horizontalLayout: 'full' })
-        )
-    );
-    console.info(program.helpInformation());
-}
+console.log(
+    chalk.green(
+        figlet.textSync('TYRION', { horizontalLayout: 'full' })
+    )
+);
+
+console.info(program.helpInformation());
 
 let scanDirectory = program.path;
 

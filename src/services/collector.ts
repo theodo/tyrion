@@ -6,14 +6,17 @@ import DebtHistory from "../model/debtHistory";
 import dateHelper from "../utils/dateHelper";
 import fs from 'fs';
 import path from 'path';
+import {Pricer} from "./pricer";
 
 const glob = require("glob");
 const nodeGit = require("nodegit");
 
 export default class Collector {
     scanningPath: string;
+    pricer: Pricer;
     constructor(scanningPath: string) {
         this.scanningPath = scanningPath;
+        this.pricer = new Pricer(scanningPath);
     }
 
     async collect(): Promise<Debt> {
@@ -24,7 +27,7 @@ export default class Collector {
         const hiddenFiles = glob.sync(allHiddenFiles, {'nodir': true});
 
         const allFiles = notHiddenFiles.concat(hiddenFiles);
-        const debt = new Debt();
+        const debt = new Debt(this.pricer);
 
         for (let fileName of allFiles) {
             const file = fs.readFileSync(fileName, 'utf-8');
@@ -36,7 +39,19 @@ export default class Collector {
 
     async collectHistory(historyNumberOfDays: number): Promise<DebtHistory> {
         const debtHistory = new DebtHistory();
-        const repository = await nodeGit.Repository.open(path.resolve(this.scanningPath));
+
+        let repositoryPath;
+
+        try {
+            repositoryPath = await nodeGit.Repository.discover(path.resolve(this.scanningPath), 0, '');
+
+            console.info('Start reading the history for the repository: ' + repositoryPath);
+
+        } catch (error) {
+            throw new Error('No GIT repository was found');
+        }
+
+        const repository = await nodeGit.Repository.open(repositoryPath);
         const firstCommitOnMaster = await repository.getMasterCommit();
         const history = firstCommitOnMaster.history();
         const commits = await this.getRelevantCommit(firstCommitOnMaster, history, historyNumberOfDays);
@@ -81,7 +96,7 @@ export default class Collector {
     }
 
     private async collectDebtFromCommit(commit:Commit): Promise<Debt> {
-        const debt = new Debt();
+        const debt = new Debt(this.pricer);
         const entries = await this.getFilesFromCommit(commit);
         for (let entry of entries) {
             await this.parseEntry(entry, debt);

@@ -1,0 +1,16 @@
+{
+  "pricer": {
+    "bug": "100",
+    "architecture": "100",
+    "bug-risk": "5",
+    "security": "100",
+    "security-risk": "10",
+    "quality": "5",
+    "test": "5",
+    "doc": "3",
+    "ci": "30",
+    "deploy": "10",
+    "dev-env": "10",
+    "outdated": "5"
+  }
+}

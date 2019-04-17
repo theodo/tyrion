@@ -1,7 +1,9 @@
 import Debt from "../model/debt";
 import DebtHistory from "../model/debtHistory";
+import { Pricer } from "./pricer";
 export default class Collector {
     scanningPath: string;
+    pricer: Pricer;
     constructor(scanningPath: string);
     collect(): Promise<Debt>;
     collectHistory(historyNumberOfDays: number): Promise<DebtHistory>;
