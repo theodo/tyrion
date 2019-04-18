@@ -1,6 +1,6 @@
 {
   "name": "tyrionl",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "technical debt collector tool",
   "repository": {
     "type": "git",
@@ -16,7 +16,8 @@
     "exec": "ts-node src/index.ts --evolution 28 --filter quality",
     "build": "tsc -p .",
     "test": "npm run build && sudo npm i -g && tyrion",
-    "refresh": "rm -rf ./node_modules ./package-lock.json && npm install"
+    "refresh": "rm -rf ./node_modules ./package-lock.json && npm install",
+    "push": "npm run build && npm publish"
   },
   "author": "Maxime Thoonsen",
   "license": "ISC",
