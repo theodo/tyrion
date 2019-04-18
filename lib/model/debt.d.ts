@@ -8,5 +8,5 @@ export default class Debt {
     private pricer;
     constructor(pricer: Pricer);
     addDebtItem(debtItem: DebtItem): void;
-    getWholeDebtInformation(): string;
+    displayDebtSummary(): void;
 }

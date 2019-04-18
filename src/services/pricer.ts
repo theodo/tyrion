@@ -39,6 +39,6 @@ export class Pricer {
             this.prices = defaultConfig.pricer;
         }
 
-        console.log('Here are the pricing for each debt item of your project:', this.prices);
+        console.info('\nHere are the pricing for each debt item of your project:\n', this.prices);
     }
 }
