@@ -1,5 +1,6 @@
 node_modules/
 .idea/
-lib/
+src/
+test_project/
 v8-*
 tyrion_report.html
