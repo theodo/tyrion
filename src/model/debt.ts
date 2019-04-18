@@ -28,13 +28,17 @@ export default class Debt {
         }
     }
 
-    getWholeDebtInformation(): string {
+    displayDebtSummary(): void {
 
-        let wholeDebtInformation = {
-            'score': this.debtScore,
-            'paretos': Array.from(this.debtParetos.values()),
-        };
+        let totalItems = 0;
+        console.info('\n');
+        this.debtParetos.forEach((debtPareto: DebtPareto, key) => {
+                const numberDebtItems = debtPareto.debtItems.length;
+                console.info(key + ': the score is ' + debtPareto.debtScore + ' and there are ' + numberDebtItems + ' debt items');
+                totalItems += numberDebtItems;
+            }
+        );
 
-        return JSON.stringify(wholeDebtInformation);
+        console.info('\nTotal: the score is '+ this.debtScore + ' and the are ' + totalItems + ' debt items');
     }
 }

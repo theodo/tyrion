@@ -14,8 +14,10 @@ const nodeGit = require("nodegit");
 export default class Collector {
     scanningPath: string;
     pricer: Pricer;
-    constructor(scanningPath: string) {
+    filter: string;
+    constructor(scanningPath: string, filter:string) {
         this.scanningPath = scanningPath;
+        this.filter = filter;
         this.pricer = new Pricer(scanningPath);
     }
 
@@ -146,7 +148,9 @@ export default class Collector {
 
         for (let line of lines) {
             const debtItem = this.parseDebtItemFromDebtLine(line, fileName);
-            debt.addDebtItem(debtItem);
+            if (!this.filter || this.filter && debtItem.type === this.filter) {
+                debt.addDebtItem(debtItem);
+            }
         }
     }
 

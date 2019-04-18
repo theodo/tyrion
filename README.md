@@ -24,13 +24,14 @@ Run `tyrion` with the following options
 ````
   -p, --path [scanDirectory]  The path of the directory you want to analyse
   -e, --evolution [days]      Get the evolution of the debt since X days
+  -f, --filter [type]         filter by a particular debt type
   -h, --help                  output usage information
 ````
 
 Example:
 
 - `tyrion -p ./src` to get the current debt score
-- `tyrion --evolution 28 --json -p .` to get the evolution of the debt during 28 days starting from the last commit.
+- `tyrion --evolution 28 -p .` to get the evolution of the debt during 28 days starting from the last commit.
 
 ## Writing debt comment
 
@@ -79,7 +80,7 @@ A complete example could be:
 
 The parser will look for all lines containing '@debt' and starting either by `*` or `#` which should cover most web programing languages.
 
-## Writing debt comment
+## Override and set the price of each type
 
 You can override the default pricing of debt items by creating a `.tyrion-config.json` file in the root directory of your project. You can even create your own types. Here is the default one:
 ````
@@ -100,6 +101,13 @@ You can override the default pricing of debt items by creating a `.tyrion-config
   }
 }
 ````
+
+## Filtering
+
+You can filter the result by any type of debt you want with the option `--filter`.
+It will compare the type and the string you pass as an argument after filter.
+
+Example: `tyrion -p ./src --filter bug`
 
 ## Contribute
 

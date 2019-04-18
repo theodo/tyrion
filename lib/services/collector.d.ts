@@ -4,7 +4,8 @@ import { Pricer } from "./pricer";
 export default class Collector {
     scanningPath: string;
     pricer: Pricer;
-    constructor(scanningPath: string);
+    filter: string;
+    constructor(scanningPath: string, filter: string);
     collect(): Promise<Debt>;
     collectHistory(historyNumberOfDays: number): Promise<DebtHistory>;
     private getRelevantCommit;

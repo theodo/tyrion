@@ -14,6 +14,7 @@ program
     .description("A debt collector from human comments in the code")
     .option('-p, --path [scanDirectory]', 'The path of the directory you want to analyse')
     .option('-e, --evolution [days]', 'Get the evolution of the debt since X days')
+    .option('-f, --filter [type]', 'Get the files that are concerned by a particular debt type')
     .parse(process.argv);
 
 console.log(
@@ -31,10 +32,11 @@ if (!scanDirectory) {
     scanDirectory = '.';
 }
 
-const collector = new Collector(scanDirectory);
+const collector = new Collector(scanDirectory, program.filter);
 
 if (program.evolution){
     const historyNumberOfDays = isNaN(parseInt(program.evolution)) ? HISTORY_DEFAULT_NUMBER_OF_DAYS : program.evolution;
+    console.info('Tyrion will scan '+ historyNumberOfDays + 'days backward from the last commit on master');
     const debtHistory = collector.collectHistory(historyNumberOfDays);
 
     debtHistory.then((debtHistory: DebtHistory) => {
@@ -43,6 +45,6 @@ if (program.evolution){
 } else {
     const debtPromise = collector.collect();
     debtPromise.then((debt: Debt) => {
-        console.log(debt.getWholeDebtInformation());
+        debt.displayDebtSummary();
     });
 }

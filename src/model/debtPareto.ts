@@ -5,7 +5,7 @@ export default class DebtPareto {
     debtItems: Array<DebtItem>;
     type: string;
 
-    private debtScore: number;
+    debtScore: number;
     private pricer: Pricer;
 
     constructor(type: string, pricer: Pricer) {
