@@ -34,8 +34,9 @@ if (!scanDirectory) {
 const collector = new Collector(scanDirectory);
 
 if (program.evolution){
-    const historyNumberOfDays = program.evolution ? program.evolution : HISTORY_DEFAULT_NUMBER_OF_DAYS;
+    const historyNumberOfDays = isNaN(parseInt(program.evolution)) ? HISTORY_DEFAULT_NUMBER_OF_DAYS : program.evolution;
     const debtHistory = collector.collectHistory(historyNumberOfDays);
+
     debtHistory.then((debtHistory: DebtHistory) => {
         TemplateRenderer.renderHtmlGraph(debtHistory);
     });
