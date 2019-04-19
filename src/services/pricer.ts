@@ -11,6 +11,10 @@ export class Pricer {
      * @param debt
      */
     getPrice(debt: DebtItem): number {
+        if (debt.price) {
+            return debt.price;
+        }
+
         const price = this.prices[debt.type] ? this.prices[debt.type] : 1;
 
         return parseInt(price);

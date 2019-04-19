@@ -141,13 +141,11 @@ export default class Collector {
 
     private parseFile(file: string, fileName: string, debt: Debt): void {
         let lines:Array<string> = file.split('\n');
-        /**
-         * @debt bug-risk:detection "Maximet: check if the line is a comment or not to avoid wrong debt detection"
-         */
+
         lines = lines.filter(line => line.indexOf('@debt') >= 0 && this.checkIfLineIsAComment(line));
 
         for (let line of lines) {
-            const debtItem = this.parseDebtItemFromDebtLine(line, fileName);
+            const debtItem = this.parseDebtLine(line, fileName);
             if (!this.filter || this.filter && debtItem.type === this.filter) {
                 debt.addDebtItem(debtItem);
             }
@@ -161,20 +159,63 @@ export default class Collector {
         return firstChar === '#' ||  firstChar === '*' ||  firstChar === '/';
     }
 
-    private parseDebtItemFromDebtLine(line:string, fileName: string): DebtItem {
+    /**
+     * Parse the different elements in a debt line.
+     * A debt line may have a comment at the end.
+     * 
+     * @param line
+     * @param fileName 
+     */
+    private parseDebtLine(line:string, fileName: string): DebtItem {
         const lineWithoutDebt = line.substr(line.indexOf('@debt') + 6);
-        const indexOfComment = lineWithoutDebt.indexOf('"');
-        const debtTypesExpression = lineWithoutDebt.substr(0, indexOfComment).trim();
-        const types = debtTypesExpression.split(':');
+    
+        const comment = this.parseDebtLineComment(line);
+        
+        const lineWithoutDebtAndComment = comment === '' ? lineWithoutDebt : lineWithoutDebt.substr(0, lineWithoutDebt.indexOf('"')).trim();
+    
+        // lineElements can be "DEBT_TYPE:SUB_TYPE" or "DEBT_TYPE:SUB_TYPE price:PRICE"
+        const lineElements = lineWithoutDebtAndComment.split(' ');
 
+        // Process DEBT_TYPE:SUB_TYPE
+        const types = lineElements[0].split(':');    
         const debtType = types[0];
         const debtCategory = types[1] ? types[1] : '';
 
-        let comment = line.substr(line.indexOf('"') + 1);
-        if (comment.indexOf('"') >= 0) {
-            comment = comment.substr(0, comment.indexOf('"'));
-        }
+        // Process price:PRICE
+        const price = this.getPrice(lineElements)
 
-        return new DebtItem(debtType, debtCategory, comment, fileName);
+        return new DebtItem(debtType, debtCategory, comment, fileName, price);
+    }
+    
+    /**
+     * Return the comment of a line debt if any.
+     * 
+     * @param line A line without the @debt in it, like : bug:error price:50 "awesome comment"
+     */
+    private parseDebtLineComment(line: string): string {        
+        const comment = line.substr(line.indexOf('"') + 1);
+        if (comment.indexOf('"') >= 0) {
+            return comment.substr(0, comment.indexOf('"'));
+        }
+        return '';
+    }
+
+    /**
+     * If exists, returns the price from a list of lineElements
+     * 
+     * @param lineElements ["DEBT_TYPE:SUB_TYPE", "price:50"] or ["DEBT_TYPE:SUB_TYPE"]
+     */
+    private getPrice(lineElements: string[]): number | undefined {
+
+        if (lineElements.length < 2) {
+            return undefined
+        }
+        
+        if (lineElements[1].startsWith("price:"))
+        {
+            parseInt(lineElements[1].split(":")[1]);
+        } 
+
+        return undefined
     }
 }
