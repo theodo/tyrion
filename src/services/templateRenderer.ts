@@ -5,7 +5,7 @@ import DebtHistory from "../model/debtHistory";
 import DateHelper from "../utils/dateHelper";
 
 export default class TemplateRenderer {
-    static renderHtmlGraph(debtHistory: DebtHistory): void {
+    static renderHtmlGraph(debtHistory: DebtHistory, standard: number): void {
         const file = fs.readFileSync(path.resolve(__dirname, '../template/google_charts/report.html'), 'utf-8');
 
         const debtGraphData = Array<any>();
@@ -20,7 +20,7 @@ export default class TemplateRenderer {
         }
 
         const compiled = _.template(file.toString());
-        const htmlGraph = compiled({ 'dataDebt': debtGraphData });
+        const htmlGraph = compiled({ 'dataDebt': debtGraphData, 'standard': standard });
 
         fs.writeFile("tyrion_report.html", htmlGraph, function(err) {
             if(err) {

@@ -13,7 +13,7 @@ export default class Config {
      * Load the configuration file from the project if it exists and
      * merge it with the default config file.
      */
-    private loadConfigs() {
+    private loadConfigs(): void {
       const defaultConfigFile = fs.readFileSync(path.resolve(__dirname, '../../.tyrion-config.json'), 'utf-8');
       const defaultConfig = JSON.parse(defaultConfigFile);
 
@@ -28,13 +28,22 @@ export default class Config {
       }
     }
     
-    getPrices() {
+    getPrices(): any {
       if (!this.config) {
         this.loadConfigs()
       }
 
       console.info('\nHere are the pricing for each debt item of your project:\n', this.config.pricer);
       return this.config.pricer;
+    }
+    
+    getStandard(): number {
+      if (!this.config) {
+        this.loadConfigs()
+      }
+  
+      console.info('\nStandard: ', this.config.standard);
+      return this.config.standard;
     }
 }
 

@@ -44,7 +44,7 @@ if (program.evolution){
     const debtHistory = collector.collectHistory(historyNumberOfDays);
 
     debtHistory.then((debtHistory: DebtHistory) => {
-        TemplateRenderer.renderHtmlGraph(debtHistory);
+        TemplateRenderer.renderHtmlGraph(debtHistory, config.getStandard());
     });
 } else {
     const debtPromise = collector.collect();

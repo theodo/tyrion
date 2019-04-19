@@ -14,7 +14,7 @@
     "tsc": "tsc",
     "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
     "exec": "ts-node src/index.ts --evolution 28 --filter quality",
-    "build": "tsc -p .",
+    "build": "tsc -p . && cp -r src/template/ lib/template/",
     "test": "npm run build && sudo npm i -g && tyrion",
     "refresh": "rm -rf ./node_modules ./package-lock.json && npm install",
     "push": "npm run build && npm publish"
