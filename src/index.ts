@@ -3,7 +3,9 @@
 import chalk from 'chalk';
 import figlet from 'figlet';
 import program from 'commander';
+
 import Collector from "./services/collector";
+import Config from "./services/config";
 import Debt from "./model/debt";
 import DebtHistory from "./model/debtHistory";
 import TemplateRenderer from "./services/templateRenderer";
@@ -32,7 +34,9 @@ if (!scanDirectory) {
     scanDirectory = '.';
 }
 
-const collector = new Collector(scanDirectory, program.filter);
+const config = new Config(scanDirectory)
+
+const collector = new Collector(scanDirectory, program.filter, config.getPrices());
 
 if (program.evolution){
     const historyNumberOfDays = isNaN(parseInt(program.evolution)) ? HISTORY_DEFAULT_NUMBER_OF_DAYS : program.evolution;
