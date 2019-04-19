@@ -12,5 +12,6 @@
     "deploy": "10",
     "dev-env": "10",
     "outdated": "5"
-  }
+  },
+  "standard": 1000
 }

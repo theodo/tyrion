@@ -15,10 +15,10 @@ export default class Collector {
     scanningPath: string;
     pricer: Pricer;
     filter: string;
-    constructor(scanningPath: string, filter:string) {
+    constructor(scanningPath: string, filter:string, prices: any) {
         this.scanningPath = scanningPath;
         this.filter = filter;
-        this.pricer = new Pricer(scanningPath);
+        this.pricer = new Pricer(prices);
     }
 
     async collect(): Promise<Debt> {

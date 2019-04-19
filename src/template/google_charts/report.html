@@ -5,7 +5,7 @@
         google.charts.load('current', {'packages':['corechart']});
         google.charts.setOnLoadCallback(drawChart);
 
-        const debtData =  [["Date","Debt Score"], <% _.forEach(dataDebt, function(debt) { %>[<%- debt.date %>, <%- debt.debtScore %>],<% }); %>];
+        const debtData =  [["Date","Debt Score", "Standard"], <% _.forEach(dataDebt, function(debt) { %>[<%- debt.date %>, <%- debt.debtScore %>, <%- standard %>],<% }); %>];
 
         function drawChart() {
             var data = google.visualization.arrayToDataTable(debtData);
