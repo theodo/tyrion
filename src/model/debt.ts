@@ -6,8 +6,7 @@ export default class Debt {
     debtParetos: Map<string, DebtPareto>;
     commitDateTime: Date = new Date();
     debtScore: number;
-
-    private pricer: Pricer;
+    pricer: Pricer;
 
     constructor(pricer: Pricer) {
         this.debtParetos = new Map<string, DebtPareto>();
@@ -26,19 +25,5 @@ export default class Debt {
            debtPareto.addDebtItem(debtItem);
            this.debtParetos.set(debtItem.type, debtPareto);
         }
-    }
-
-    displayDebtSummary(): void {
-
-        let totalItems = 0;
-        console.info('\n');
-        this.debtParetos.forEach((debtPareto: DebtPareto, key) => {
-                const numberDebtItems = debtPareto.debtItems.length;
-                console.info(key + ': the score is ' + debtPareto.debtScore + ' and there are ' + numberDebtItems + ' debt items');
-                totalItems += numberDebtItems;
-            }
-        );
-
-        console.info('\nTotal: the score is '+ this.debtScore + ' and the are ' + totalItems + ' debt items');
     }
 }

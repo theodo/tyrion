@@ -162,22 +162,22 @@ export default class Collector {
     /**
      * Parse the different elements in a debt line.
      * A debt line may have a comment at the end.
-     * 
+     *
      * @param line
-     * @param fileName 
+     * @param fileName
      */
     private parseDebtLine(line:string, fileName: string): DebtItem {
         const lineWithoutDebt = line.substr(line.indexOf('@debt') + 6);
-    
+
         const comment = this.parseDebtLineComment(line);
-        
+
         const lineWithoutDebtAndComment = comment === '' ? lineWithoutDebt : lineWithoutDebt.substr(0, lineWithoutDebt.indexOf('"')).trim();
-    
+
         // lineElements can be "DEBT_TYPE:SUB_TYPE" or "DEBT_TYPE:SUB_TYPE price:PRICE"
         const lineElements = lineWithoutDebtAndComment.split(' ');
 
         // Process DEBT_TYPE:SUB_TYPE
-        const types = lineElements[0].split(':');    
+        const types = lineElements[0].split(':');
         const debtType = types[0];
         const debtCategory = types[1] ? types[1] : '';
 
@@ -186,13 +186,13 @@ export default class Collector {
 
         return new DebtItem(debtType, debtCategory, comment, fileName, price);
     }
-    
+
     /**
      * Return the comment of a line debt if any.
-     * 
-     * @param line A line without the @debt in it, like : bug:error price:50 "awesome comment"
+     *
+     * @param line . A line without the @debt tag in it, like : bug:error price:50 "awesome comment"
      */
-    private parseDebtLineComment(line: string): string {        
+    private parseDebtLineComment(line: string): string {
         const comment = line.substr(line.indexOf('"') + 1);
         if (comment.indexOf('"') >= 0) {
             return comment.substr(0, comment.indexOf('"'));
@@ -202,7 +202,7 @@ export default class Collector {
 
     /**
      * If exists, returns the price from a list of lineElements
-     * 
+     *
      * @param lineElements ["DEBT_TYPE:SUB_TYPE", "price:50"] or ["DEBT_TYPE:SUB_TYPE"]
      */
     private getPrice(lineElements: string[]): number | undefined {
@@ -210,11 +210,11 @@ export default class Collector {
         if (lineElements.length < 2) {
             return undefined
         }
-        
+
         if (lineElements[1].startsWith("price:"))
         {
             parseInt(lineElements[1].split(":")[1]);
-        } 
+        }
 
         return undefined
     }
