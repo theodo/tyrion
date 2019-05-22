@@ -18,16 +18,17 @@ program
     .option('-p, --path [scanDirectory]', 'The path of the directory you want to analyse')
     .option('-e, --evolution [days]', 'Get the evolution of the debt since X days')
     .option('-f, --filter [type]', 'Get the files that are concerned by a particular debt type')
-    .parse(process.argv);
 
-console.log(
-    chalk.green(
-        figlet.textSync('TYRION', { horizontalLayout: 'full' })
-    )
-);
+program.on('--help', function() {
+    console.log('');
+    console.log(
+        chalk.green(
+            figlet.textSync('TYRION', { horizontalLayout: 'full' })
+        ));
+});
 
-console.info(program.helpInformation());
-
+program.parse(process.argv);
+            
 let scanDirectory = program.path;
 
 if (!scanDirectory) {
