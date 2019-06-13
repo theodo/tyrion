@@ -35,6 +35,8 @@ Example:
 
 ## Writing debt comment
 
+You can use either the following debt tag for the same result: `@debt`, `TODO`, `FIXME`.
+
 Tyrion parses the files looking for comments that follows the following convention:
 
 ````
