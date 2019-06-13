@@ -38,7 +38,9 @@ if (!scanDirectory) {
 
 const config = new Config(scanDirectory)
 
-const collector = new Collector(scanDirectory, program.filter, config.getPrices());
+const collector = new Collector(scanDirectory, program.filter, config.getPrices(), config.getIgnored());
+
+export const ignored = config.getIgnored()
 
 if (program.evolution){
     const historyNumberOfDays = isNaN(parseInt(program.evolution)) ? HISTORY_DEFAULT_NUMBER_OF_DAYS : program.evolution;
