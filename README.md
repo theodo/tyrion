@@ -132,6 +132,16 @@ It will compare the type and the string you pass as an argument after filter.
 
 Example: `tyrion -p ./src --filter bug`
 
+
+## Ignore paths
+
+You can ignore files containing certain strings by using the `"ignore"`option in the config file:
+```
+"ignore": "node_modules"
+```
+
+Todo: add capability for multiple ignore paths in array (currently only takes singular string)
+
 ## Contribute
 
 1. Install the dependencies `npm i`
