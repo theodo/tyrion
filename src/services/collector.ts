@@ -11,6 +11,8 @@ import {Pricer} from "./pricer";
 const glob = require("glob");
 const nodeGit = require("nodegit");
 
+const debtTags = ['@debt', 'TODO', 'FIXME'];
+
 export default class Collector {
     scanningPath: string;
     pricer: Pricer;
@@ -142,19 +144,39 @@ export default class Collector {
     private parseFile(file: string, fileName: string, debt: Debt): void {
         let lines:Array<string> = file.split('\n');
 
-        lines = lines.filter(line => line.indexOf('@debt') >= 0 && this.checkIfLineIsAComment(line));
+        lines = lines.filter(line => this.isComment(line));
 
         for (let line of lines) {
-            const debtItem = this.parseDebtLine(line, fileName);
-            if (!this.filter || this.filter && debtItem.type === this.filter) {
-                debt.addDebtItem(debtItem);
+            const debtTag = this.getDebtTag(line);
+            if (debtTag){
+                const debtItem = this.parseDebtLine(line, fileName, debtTag);
+                if (!this.filter || this.filter && debtItem.type === this.filter) {
+                    debt.addDebtItem(debtItem);
+                }
             }
         }
     }
 
-    private checkIfLineIsAComment(line:string): boolean {
-        const lineTrimed = line.trim();
-        const firstChar = lineTrimed.charAt(0);
+    /**
+     * Check if the line contains a debt Tag
+     *
+     * @param line
+     */
+    private getDebtTag(line: string) {
+        for (let debtTag of debtTags) {
+            if (line.indexOf(debtTag) >= 0) {
+                return debtTag;
+            }
+        }
+    }
+
+    /**
+     * Check if the line is a comment
+     * @param line
+     */
+    private isComment(line:string): boolean {
+        const lineTrimmed = line.trim();
+        const firstChar = lineTrimmed.charAt(0);
 
         return firstChar === '#' ||  firstChar === '*' ||  firstChar === '/';
     }
@@ -166,12 +188,12 @@ export default class Collector {
      * @param line
      * @param fileName
      */
-    private parseDebtLine(line:string, fileName: string): DebtItem {
-        const lineWithoutDebt = line.substr(line.indexOf('@debt') + 6);
+    private parseDebtLine(line:string, fileName: string, debtTag: string): DebtItem {
+        const lineWithoutDebtTag = line.substr(line.indexOf(debtTag) + debtTag.length + 1);
 
         const comment = this.parseDebtLineComment(line);
 
-        const lineWithoutDebtAndComment = comment === '' ? lineWithoutDebt : lineWithoutDebt.substr(0, lineWithoutDebt.indexOf('"')).trim();
+        const lineWithoutDebtAndComment = comment === '' ? lineWithoutDebtTag : lineWithoutDebtTag.substr(0, lineWithoutDebtTag.indexOf('"')).trim();
 
         // lineElements can be "DEBT_TYPE:SUB_TYPE" or "DEBT_TYPE:SUB_TYPE price:PRICE"
         const lineElements = lineWithoutDebtAndComment.split(' ');
