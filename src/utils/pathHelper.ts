@@ -11,6 +11,10 @@ export default class PathHelper {
     }
 
     private static isFileMatchPathPattern(path: string, pathPattern:string): boolean {
+        if (pathPattern.indexOf('./') !== 0){
+            pathPattern = './' + pathPattern;
+        }
+
         // The only relevant case where the pathPattern can be a file
         if (path === pathPattern) {
             return true;
@@ -21,11 +25,6 @@ export default class PathHelper {
             pathPattern = pathPattern + '/';
         }
 
-        if (pathPattern.indexOf('./') !== 0){
-            pathPattern = './' + pathPattern;
-        }
-
         return path.indexOf(pathPattern) === 0;
     }
-
 }

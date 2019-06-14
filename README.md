@@ -121,7 +121,12 @@ You can override the default pricing of debt items by creating a `.tyrion-config
     "deploy": "10",
     "dev-env": "10",
     "outdated": "5"
-  }
+  },
+    "standard": 1000,
+    "ignorePath": [
+      "node_modules",
+      "README.md"
+    ]
 }
 ````
 
@@ -135,9 +140,12 @@ Example: `tyrion -p ./src --filter bug`
 
 ## Ignore paths
 
-You can ignore files containing certain strings by using the `"ignore"`option in the config file:
+You can ignore files containing certain strings by using the `"ignorePath"`option in the config file:
 ```
-"ignore": "node_modules"
+"ignorePath": [
+  "node_modules",
+  "README.md"
+]
 ```
 
 Todo: add capability for multiple ignore paths in array (currently only takes singular string)
