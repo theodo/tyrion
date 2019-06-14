@@ -7,7 +7,7 @@ import dateHelper from "../utils/dateHelper";
 import fs from 'fs';
 import path from 'path';
 import {Pricer} from "./pricer";
-import {ignored} from "../index"
+import pathHelper from "../utils/pathHelper";
 
 const glob = require("glob");
 const nodeGit = require("nodegit");
@@ -18,17 +18,19 @@ export default class Collector {
     scanningPath: string;
     pricer: Pricer;
     filter: string;
-    withoutIgnored: string;
+    ignorePath: string;
 
-    constructor(scanningPath: string, filter:string, prices: any, withoutIgnored: string) {
+    constructor(scanningPath: string, filter:string, prices: any, ignorePath: string) {
         this.scanningPath = scanningPath;
+
+        console.log(scanningPath);
+
         this.filter = filter;
         this.pricer = new Pricer(prices);
-        this.withoutIgnored = withoutIgnored;
+        this.ignorePath = ignorePath;
     }
 
     async collect(): Promise<Debt> {
-        const ignorePath = ignored
         const allNotHiddenFiles = this.scanningPath + '/**/*.*';
         const notHiddenFiles = glob.sync(allNotHiddenFiles, {'nodir': true});
         const allHiddenFiles = this.scanningPath + '/**/.*';
@@ -36,8 +38,8 @@ export default class Collector {
 
         const allFiles = notHiddenFiles.concat(hiddenFiles);
         const debt = new Debt(this.pricer);
-        const withoutIgnored = allFiles.filter((path: string) => !path.includes(ignorePath))
-        for (let fileName of withoutIgnored) {
+        const targetedFiles = allFiles.filter((path: string) => !pathHelper.isFileMatchPathPatternArray(path, [this.ignorePath]));
+        for (let fileName of targetedFiles) {
             const file = fs.readFileSync(fileName, 'utf-8');
             this.parseFile(file, fileName, debt);
         }
