@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 
 export default class Config {
-    private path: string;
+    private readonly path: string;
     private config: any;
 
     constructor(path:string) {
@@ -42,7 +42,7 @@ export default class Config {
       if (!this.config) {
         this.loadConfigs()
       }
-  
+
       console.info('\nStandard: ', this.config.standard);
       return this.config.standard;
     }
@@ -51,7 +51,8 @@ export default class Config {
         if (!this.config) {
             this.loadConfigs()
         }
-        console.info('\n Ignored: ', this.config.ignore);
-        return this.config.ignore;
+
+        console.info('\n Ignore path: ', this.config.ignorePath);
+        return this.config.ignorePath;
     }
 }

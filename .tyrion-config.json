@@ -13,5 +13,6 @@
     "dev-env": "10",
     "outdated": "5"
   },
-  "standard": 1000
+  "standard": 1000,
+  "ignorePath": "node_modules"
 }
