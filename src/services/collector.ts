@@ -18,16 +18,13 @@ export default class Collector {
     scanningPath: string;
     pricer: Pricer;
     filter: string;
-    ignorePath: string;
+    ignorePaths: Array<string>;
 
-    constructor(scanningPath: string, filter:string, prices: any, ignorePath: string) {
+    constructor(scanningPath: string, filter:string, prices: any, ignorePaths: Array<string>) {
         this.scanningPath = scanningPath;
-
-        console.log(scanningPath);
-
         this.filter = filter;
         this.pricer = new Pricer(prices);
-        this.ignorePath = ignorePath;
+        this.ignorePaths = ignorePaths;
     }
 
     async collect(): Promise<Debt> {
@@ -38,7 +35,7 @@ export default class Collector {
 
         const allFiles = notHiddenFiles.concat(hiddenFiles);
         const debt = new Debt(this.pricer);
-        const targetedFiles = allFiles.filter((path: string) => !pathHelper.isFileMatchPathPatternArray(path, [this.ignorePath]));
+        const targetedFiles = allFiles.filter((path: string) => !pathHelper.isFileMatchPathPatternArray(path, this.ignorePaths));
         for (let fileName of targetedFiles) {
             const file = fs.readFileSync(fileName, 'utf-8');
             this.parseFile(file, fileName, debt);

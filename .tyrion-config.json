@@ -14,5 +14,8 @@
     "outdated": "5"
   },
   "standard": 1000,
-  "ignorePath": "node_modules"
+  "ignorePath": [
+    "node_modules",
+    "README.md"
+  ]
 }
