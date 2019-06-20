@@ -1,3 +1,6 @@
+import Table from 'cli-table';
+import colors from 'colors';
+
 import DebtPareto from "../model/debtPareto";
 import DebtItem from "../model/debtItem";
 import Debt from "../model/debt";
@@ -20,39 +23,53 @@ export default class CodeQualityInformationDisplayer {
 
     static displayDebtSummary(debt: Debt): void {
         let totalItems = 0;
-        console.info('\n ♻️♻️♻️ Debt Information ♻️♻️♻️');
+        console.info(colors.green('\n ♻️♻️♻️ Debt Information ♻️♻️♻️'));
+
+        const table = new Table({
+            head: [colors.bold('Type'), colors.bold('Score'), colors.bold('File'), colors.bold('Comment')]
+        });
+
         debt.debtParetos.forEach((debtPareto: DebtPareto, key) => {
                 const debtItemsNumber = debtPareto.debtItems.length;
-                console.info(key + ': the score is ' + debtPareto.debtScore + ' and there are ' + debtItemsNumber + ' debt items:');
-
                 debtPareto.debtItems.map((debtItem: DebtItem) => {
-                    console.log(' - ' + debtItem.fileName + ': "'+ debtItem.comment + '" (' + debt.pricer.getPrice(debtItem) + ' points)');
+                    table.push(
+                        [debtItem.type, debt.pricer.getPrice(debtItem), debtItem.fileName , debtItem.comment]
+                    );
                 });
-
-                console.log('');
                 totalItems += debtItemsNumber;
             }
         );
 
-        console.info('\n♻The total debt score is '+ debt.debtScore + ' and there are ' + totalItems + ' debt items♻');
+        table.push(
+            [colors.red(colors.bold('Total')), colors.red(colors.bold('' + debt.debtScore)), colors.red(colors.bold(totalItems + ' debt items'))]
+        );
+
+        console.log(table.toString())
     }
 
     static displayLouvre(louvre: Louvre): void {
         let totalItems = 0;
-        console.info('\n 🖼🖼🖼 Quality Information 🖼🖼🖼');
+        console.info(colors.green('\n 🖼🖼🖼 Quality Information 🖼🖼🖼'));
+
+        const table = new Table({
+            head: [colors.bold('Type'), colors.bold('File'), colors.bold('Comment')]
+        });
+
         louvre.jocondeParetos.forEach((jocondePareto: JocondePareto, key) => {
                 const jocondeNumber = jocondePareto.jocondes.length;
-                console.info('There are ' + jocondeNumber + ' joconde for the ' + key +' category:');
-
                 jocondePareto.jocondes.map((joconde: Joconde) => {
-                    console.log(' - ' + joconde.fileName + ': "'+ joconde.comment +'"');
+                    table.push(
+                        [joconde.type, joconde.fileName , joconde.comment]
+                    );
                 });
-
-                console.log('');
                 totalItems += jocondeNumber;
             }
         );
 
-        console.info('\n🖼 There is a total of ' + totalItems + ' jocondes 🖼');
+        table.push(
+            [colors.red(colors.bold('Total')), colors.red(colors.bold(totalItems + ' debt items'))]
+        );
+
+        console.log(table.toString())
     }
 }
