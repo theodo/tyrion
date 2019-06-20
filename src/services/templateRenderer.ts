@@ -27,8 +27,6 @@ export default class TemplateRenderer {
                 return console.log(err);
             }
             console.info("The report was generated!");
-
-
         });
     }
 }
