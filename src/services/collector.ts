@@ -2,17 +2,20 @@ import DebtItem from "../model/debtItem";
 import Debt from "../model/debt";
 import {Commit, TreeEntry} from "nodegit";
 import {HistoryEventEmitter} from "nodegit/commit";
-import DebtHistory from "../model/debtHistory";
 import dateHelper from "../utils/dateHelper";
 import fs from 'fs';
 import path from 'path';
 import {Pricer} from "./pricer";
 import pathHelper from "../utils/pathHelper";
+import CodeQualityInformation from "../model/codeQualityInformation";
+import Louvre from "../model/louvre";
+import CodeQualityInformationHistory from "../model/codeQualityInformationHistory";
 
 const glob = require("glob");
 const nodeGit = require("nodegit");
 
 const debtTags = ['@debt', 'TODO', 'FIXME'];
+const standardTags = ['BEST', 'STANDARD', 'JOCONDE'];
 
 export default class Collector {
     scanningPath: string;
@@ -27,7 +30,7 @@ export default class Collector {
         this.ignorePaths = ignorePaths;
     }
 
-    async collect(): Promise<Debt> {
+    async collect(): Promise<CodeQualityInformation> {
         const allNotHiddenFiles = this.scanningPath + '/**/*.*';
         const notHiddenFiles = glob.sync(allNotHiddenFiles, {'nodir': true});
         const allHiddenFiles = this.scanningPath + '/**/.*';
@@ -35,17 +38,20 @@ export default class Collector {
 
         const allFiles = notHiddenFiles.concat(hiddenFiles);
         const debt = new Debt(this.pricer);
+        const louvre = new Louvre();
+        const codeQualityInformation = new CodeQualityInformation(debt, louvre);
+
         const targetedFiles = allFiles.filter((path: string) => !pathHelper.isFileMatchPathPatternArray(path, this.ignorePaths));
         for (let fileName of targetedFiles) {
             const file = fs.readFileSync(fileName, 'utf-8');
-            this.parseFile(file, fileName, debt);
+            this.parseFile(file, fileName, codeQualityInformation);
         }
-        return debt;
+
+        return codeQualityInformation;
     }
 
-    async collectHistory(historyNumberOfDays: number): Promise<DebtHistory> {
-        const debtHistory = new DebtHistory();
-
+    async collectHistory(historyNumberOfDays: number): Promise<CodeQualityInformationHistory> {
+        const codeQualityInformationHistory = new CodeQualityInformationHistory();
         let repositoryPath;
 
         try {
@@ -63,14 +69,15 @@ export default class Collector {
         const commits = await this.getRelevantCommit(firstCommitOnMaster, history, historyNumberOfDays);
 
         for (let commit of commits) {
-            const debt = await this.collectDebtFromCommit(commit);
-            debt.commitDateTime = commit.date();
-            debtHistory.addDebt(debt);
+            const codeQualityInformation = await this.collectDebtFromCommit(commit);
+            codeQualityInformation.commitDateTime = commit.date();
+            codeQualityInformationHistory.addCodeQualityInformation(codeQualityInformation);
         }
 
-        return debtHistory;
+        return codeQualityInformationHistory;
     }
 
+    //TODO quality "Maximet: put the function navigating through the git history in a service"
     private async getRelevantCommit(firstCommit: Commit, history: HistoryEventEmitter, historyNumberOfDays: number): Promise<Array<Commit>> {
         return new Promise((resolve) => {
             history.on("end", function(commits: Array<Commit>) {
@@ -101,14 +108,16 @@ export default class Collector {
         });
     }
 
-    private async collectDebtFromCommit(commit:Commit): Promise<Debt> {
+    private async collectDebtFromCommit(commit:Commit): Promise<CodeQualityInformation> {
         const debt = new Debt(this.pricer);
+        const louvre = new Louvre();
+        const codeQualityInformation = new CodeQualityInformation(debt, louvre);
         const entries = await this.getFilesFromCommit(commit);
         for (let entry of entries) {
-            await this.parseEntry(entry, debt);
+            await this.parseEntry(entry, codeQualityInformation);
         }
 
-        return debt;
+        return codeQualityInformation;
     }
 
     private async getFilesFromCommit(commit:Commit): Promise<Array<TreeEntry>> {
@@ -130,20 +139,21 @@ export default class Collector {
         });
     }
 
-    private async parseEntry(entry: TreeEntry, debt: Debt): Promise<void> {
+    private async parseEntry(entry: TreeEntry, codeQualityInformation: CodeQualityInformation): Promise<void> {
         const those = this;
         return new Promise((resolve => {
             const blob = entry.getBlob();
             blob
             .then(function (blob) {
-                those.parseFile(String(blob), entry.path(), debt);
+                those.parseFile(String(blob), entry.path(), codeQualityInformation);
                 resolve();
             })
             .catch((reason => console.error('Error while parsing the blob of the file', reason)));
         }))
     }
 
-    private parseFile(file: string, fileName: string, debt: Debt): void {
+    //TODO: quality "Should split this file into multiple files including one service dedicated to the parsing
+    private parseFile(file: string, fileName: string, codeQualityInformation: CodeQualityInformation): void {
         let lines:Array<string> = file.split('\n');
 
         lines = lines.filter(line => this.isComment(line));
@@ -153,7 +163,7 @@ export default class Collector {
             if (debtTag){
                 const debtItem = this.parseDebtLine(line, fileName, debtTag);
                 if (!this.filter || this.filter && debtItem.type === this.filter) {
-                    debt.addDebtItem(debtItem);
+                    codeQualityInformation.debt.addDebtItem(debtItem);
                 }
             }
         }

@@ -4,7 +4,6 @@ import DebtPareto from "./debtPareto";
 
 export default class Debt {
     debtParetos: Map<string, DebtPareto>;
-    commitDateTime: Date = new Date();
     debtScore: number;
     pricer: Pricer;
 
