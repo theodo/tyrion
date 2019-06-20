@@ -10,12 +10,13 @@ import pathHelper from "../utils/pathHelper";
 import CodeQualityInformation from "../model/codeQualityInformation";
 import Louvre from "../model/louvre";
 import CodeQualityInformationHistory from "../model/codeQualityInformationHistory";
+import Joconde from "../model/joconde";
 
 const glob = require("glob");
 const nodeGit = require("nodegit");
 
 const debtTags = ['@debt', 'TODO', 'FIXME'];
-const standardTags = ['BEST', 'STANDARD', 'JOCONDE'];
+const jocondeTags = ['@best', '@standard', 'JOCONDE'];
 
 export default class Collector {
     scanningPath: string;
@@ -159,25 +160,34 @@ export default class Collector {
         lines = lines.filter(line => this.isComment(line));
 
         for (let line of lines) {
-            const debtTag = this.getDebtTag(line);
+            const debtTag = this.getTag(line, debtTags);
             if (debtTag){
                 const debtItem = this.parseDebtLine(line, fileName, debtTag);
                 if (!this.filter || this.filter && debtItem.type === this.filter) {
                     codeQualityInformation.debt.addDebtItem(debtItem);
                 }
             }
+
+            const jocondeTag = this.getTag(line, jocondeTags);
+            if (jocondeTag){
+                const joconde = this.parseJocondeLine(line, fileName, jocondeTag);
+                if (!this.filter || this.filter && joconde.type === this.filter) {
+                    codeQualityInformation.louvre.addJoconde(joconde);
+                }
+            }
         }
     }
 
     /**
-     * Check if the line contains a debt Tag
+     * Check if the line contains a Tag
      *
      * @param line
+     * @param tags
      */
-    private getDebtTag(line: string) {
-        for (let debtTag of debtTags) {
-            if (line.indexOf(debtTag) >= 0) {
-                return debtTag;
+    private getTag(line: string, tags: Array<string>) {
+        for (let tag of tags) {
+            if (line.indexOf(tag) >= 0) {
+                return tag;
             }
         }
     }
@@ -219,6 +229,31 @@ export default class Collector {
         const price = this.getPrice(lineElements)
 
         return new DebtItem(debtType, debtCategory, comment, fileName, price);
+    }
+
+    /**
+     * TODO quality "Maximet: parseDebtLine and parseJocondeLine can be refactored"
+     *
+     * @param line
+     * @param fileName
+     * @param tag
+     */
+    private parseJocondeLine(line:string, fileName: string, tag: string): DebtItem {
+        const lineWithoutTag = line.substr(line.indexOf(tag) + tag.length + 1);
+
+        const comment = this.parseDebtLineComment(line);
+
+        const lineWithoutDebtAndComment = comment === '' ? lineWithoutTag : lineWithoutTag.substr(0, lineWithoutTag.indexOf('"')).trim();
+
+        // lineElements can be "TYPE" or "TYPE:SUB_TYPE"
+        const lineElements = lineWithoutDebtAndComment.split(' ');
+
+        // Process DEBT_TYPE:SUB_TYPE
+        const types = lineElements[0].split(':');
+        const type = types[0];
+        const category = types[1] ? types[1] : '';
+
+        return new Joconde(type, category, comment, fileName);
     }
 
     /**
