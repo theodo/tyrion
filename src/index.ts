@@ -6,10 +6,10 @@ import program from 'commander';
 
 import Collector from "./services/collector";
 import Config from "./services/config";
-import Debt from "./model/debt";
-import DebtHistory from "./model/debtHistory";
 import TemplateRenderer from "./services/templateRenderer";
-import DebtDisplayer from "./services/debtDisplayer";
+import CodeQualityInformationDisplayer from "./services/codeQualityInformationDisplayer";
+import CodeQualityInformation from "./model/codeQualityInformation";
+import CodeQualityInformationHistory from "./model/codeQualityInformationHistory";
 
 const HISTORY_DEFAULT_NUMBER_OF_DAYS = 28;
 
@@ -43,14 +43,14 @@ const collector = new Collector(scanDirectory, program.filter, config.getPrices(
 if (program.evolution){
     const historyNumberOfDays = isNaN(parseInt(program.evolution)) ? HISTORY_DEFAULT_NUMBER_OF_DAYS : program.evolution;
     console.info('Tyrion will scan '+ historyNumberOfDays + ' days backward from the last commit on master');
-    const debtHistory = collector.collectHistory(historyNumberOfDays);
+    const codeQualityInformationHistory= collector.collectHistory(historyNumberOfDays);
 
-    debtHistory.then((debtHistory: DebtHistory) => {
-        TemplateRenderer.renderHtmlGraph(debtHistory, config.getStandard());
+    codeQualityInformationHistory.then((codeQualityInformationHistory: CodeQualityInformationHistory) => {
+        TemplateRenderer.renderHtmlGraph(codeQualityInformationHistory, config.getStandard());
     });
 } else {
-    const debtPromise = collector.collect();
-    debtPromise.then((debt: Debt) => {
-        DebtDisplayer.displayDebtSummary(debt);
+    const codeQualityInformationPromise = collector.collect();
+    codeQualityInformationPromise.then((codeQualityInformation: CodeQualityInformation) => {
+        CodeQualityInformationDisplayer.display(codeQualityInformation);
     });
 }

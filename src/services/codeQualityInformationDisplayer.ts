@@ -1,8 +1,16 @@
 import DebtPareto from "../model/debtPareto";
 import DebtItem from "../model/debtItem";
 import Debt from "../model/debt";
+import CodeQualityInformation from "../model/codeQualityInformation";
 
-export default class DebtDisplayer {
+export default class CodeQualityInformationDisplayer {
+
+    static display(codeQualityInformation: CodeQualityInformation): void {
+        if (codeQualityInformation.debt) {
+            this.displayDebtSummary(codeQualityInformation.debt);
+        }
+    }
+
     static displayDebtSummary(debt: Debt): void {
         let totalItems = 0;
         console.info('\n');
