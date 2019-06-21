@@ -3,6 +3,7 @@
 import chalk from 'chalk';
 import figlet from 'figlet';
 import program from 'commander';
+import colors from 'colors';
 
 import Collector from "./services/collector";
 import Config from "./services/config";
@@ -32,7 +33,7 @@ program.parse(process.argv);
 let scanDirectory = program.path;
 
 if (!scanDirectory) {
-    console.warn('No path was specified using the -p options. Tyrion will scan the current directory');
+    console.warn(colors.red('⚠ No path was specified using the -p options. Tyrion will scan the current directory ⚠'));
     scanDirectory = '.';
 }
 
