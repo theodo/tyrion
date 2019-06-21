@@ -1,5 +1,7 @@
 import fs from "fs";
 import path from "path";
+import Table from 'cli-table';
+import colors from 'colors';
 
 export default class Config {
     private readonly path: string;
@@ -30,21 +32,31 @@ export default class Config {
     }
 
     getPrices(): any {
-      if (!this.config) {
-        this.loadConfigs()
-      }
+        if (!this.config) {
+            this.loadConfigs();
 
-      console.info('\nHere are the pricing for each debt item of your project:\n', this.config.pricer);
-      return this.config.pricer;
+            const table = new Table({
+                head: [colors.bold('Type'), colors.bold('Price')]
+            });
+
+            Object.keys(this.config.pricer).forEach(type => {
+                    table.push([type, this.config.pricer[type]]);
+            });
+
+            console.log(table.toString());
+        }
+
+        return this.config.pricer;
+
     }
 
     getStandard(): number {
-      if (!this.config) {
+        if (!this.config) {
         this.loadConfigs()
-      }
+        }
 
-      console.info('\nStandard: ', this.config.standard);
-      return this.config.standard;
+        console.info('\nStandard: ', this.config.standard);
+        return this.config.standard;
     }
 
     getIgnored(): any{
@@ -52,7 +64,7 @@ export default class Config {
             this.loadConfigs()
         }
 
-        console.info('\n Ignore path: ', this.config.ignorePath);
+        console.info('\n The following path from the config will be ignored: ', this.config.ignorePath);
         return this.config.ignorePath;
     }
 }
