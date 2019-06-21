@@ -130,6 +130,13 @@ You can override the default pricing of debt items by creating a `.tyrion-config
 }
 ````
 
+## Writing good practices examples
+
+You can also mark some files as being "Joconde" a file that follows perfectly the standard of code quality.
+You can use either the following tag for the same result: `@best`, `@standard`, `JOCONDE`.
+
+Example: `// JOCONDE React:component "The standard can be find here: http....."`
+
 ## Filtering
 
 You can filter the result by any type of debt you want with the option `--filter`.
