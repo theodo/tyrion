@@ -147,7 +147,7 @@ Example: `tyrion -p ./src --filter bug`
 
 ## Ignore paths
 
-You can ignore files containing certain strings by using the `"ignorePath"`option in the config file:
+You can ignore files containing certain strings by using the `"ignorePath"` option in the config file:
 ```
 "ignorePath": [
   "node_modules",
