@@ -1,4 +1,6 @@
 # Tyrion
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Ftheodo%2Ftyrion.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Ftheodo%2Ftyrion?ref=badge_shield)
+
 
 ## About the tool
 
@@ -162,3 +164,7 @@ Todo: add capability for multiple ignore paths in array (currently only takes si
 
 1. Install the dependencies `npm i`
 2. Run `npm start` during development to see your last changes in action.
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Ftheodo%2Ftyrion.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Ftheodo%2Ftyrion?ref=badge_large)
