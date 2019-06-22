@@ -46,6 +46,7 @@ Run `tyrion` with the following options
   -p, --path [scanDirectory]  The path of the directory you want to analyse
   -e, --evolution [days]      Get the evolution of the debt since X days
   -f, --filter [type]         filter by a particular debt type
+  -n, --nobrowser [type]      Don't open the report after being generated
   -h, --help                  output usage information
 ````
 
