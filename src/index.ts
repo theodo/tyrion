@@ -4,6 +4,7 @@ import chalk from 'chalk';
 import figlet from 'figlet';
 import program from 'commander';
 import colors from 'colors';
+import open from 'open';
 
 import Collector from "./services/collector";
 import Config from "./services/config";
@@ -19,6 +20,7 @@ program
     .option('-p, --path [scanDirectory]', 'The path of the directory you want to analyse')
     .option('-e, --evolution [days]', 'Get the evolution of the debt since X days')
     .option('-f, --filter [type]', 'Get the files that are concerned by a particular debt type')
+    .option('-n, --nobrowser [browser]', 'Don\'t open the report after being generated')
 
 program.on('--help', function() {
     console.log('');
@@ -47,7 +49,14 @@ if (program.evolution){
     const codeQualityInformationHistory= collector.collectHistory(historyNumberOfDays);
 
     codeQualityInformationHistory.then((codeQualityInformationHistory: CodeQualityInformationHistory) => {
-        TemplateRenderer.renderHtmlGraph(codeQualityInformationHistory, config.getStandard());
+        const reportName = TemplateRenderer.renderHtmlGraph(codeQualityInformationHistory, config.getStandard());
+        const reportPath = scanDirectory + '/' + reportName;
+
+        console.log(colors.green('The report was generated at ' + reportPath));
+
+        if (!program.nobrowser) {
+            open(reportPath).catch((error => console.error(error)));
+        }
     });
 } else {
     const codeQualityInformationPromise = collector.collect();

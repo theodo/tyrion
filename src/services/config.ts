@@ -52,10 +52,9 @@ export default class Config {
 
     getStandard(): number {
         if (!this.config) {
-        this.loadConfigs()
+            this.loadConfigs()
         }
 
-        console.info('\nStandard: ', this.config.standard);
         return this.config.standard;
     }
 
