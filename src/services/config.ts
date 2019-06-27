@@ -35,15 +35,6 @@ export default class Config {
         if (!this.config) {
             this.loadConfigs();
 
-            const table = new Table({
-                head: [colors.bold('Type'), colors.bold('Price')]
-            });
-
-            Object.keys(this.config.pricer).forEach(type => {
-                    table.push([type, this.config.pricer[type]]);
-            });
-
-            console.log(table.toString());
         }
 
         return this.config.pricer;
@@ -63,7 +54,6 @@ export default class Config {
             this.loadConfigs()
         }
 
-        console.info('\n The following path from the config will be ignored: ', this.config.ignorePath);
         return this.config.ignorePath;
     }
 }

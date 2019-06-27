@@ -39,7 +39,7 @@ if (!scanDirectory) {
     scanDirectory = '.';
 }
 
-const config = new Config(scanDirectory)
+const config = new Config(scanDirectory);
 
 const collector = new Collector(scanDirectory, program.filter, config.getPrices(), config.getIgnored());
 
