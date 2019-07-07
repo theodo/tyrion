@@ -1,22 +1,21 @@
-import DebtItem from "../model/debtItem";
+import DebtItem from '../model/debtItem';
+import { Prices } from './config';
 
 export class Pricer {
-    private prices: any;
+  private readonly prices: Prices;
 
-    constructor(prices: any) {
-        this.prices = prices;
+  public constructor(prices: Prices) {
+    this.prices = prices;
+  }
+
+  /**
+   * @param debt
+   */
+  public getPrice(debt: DebtItem): number {
+    if (debt.price) {
+      return debt.price;
     }
 
-    /**
-     * @param debt
-     */
-    getPrice(debt: DebtItem): number {
-        if (debt.price) {
-            return debt.price;
-        }
-
-        const price = this.prices[debt.type] ? this.prices[debt.type] : 1;
-
-        return parseInt(price);
-    }
+    return this.prices[debt.type] ? this.prices[debt.type] : 1;
+  }
 }

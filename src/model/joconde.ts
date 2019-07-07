@@ -1,13 +1,13 @@
 export default class Joconde {
-    type: string;
-    fileName: string;
-    category: string;
-    comment: string;
+  public type: string;
+  public fileName: string;
+  public category: string;
+  public comment: string;
 
-    constructor(type: string, category: string, comment: string, fileName:string) {
-        this.type = type;
-        this.fileName = fileName;
-        this.category = category;
-        this.comment = comment;
-    }
+  public constructor(type: string, category: string, comment: string, fileName: string) {
+    this.type = type;
+    this.fileName = fileName;
+    this.category = category;
+    this.comment = comment;
+  }
 }
