@@ -1,15 +1,15 @@
 export default class DebtItem {
-    type: string;
-    category: string;
-    comment: string;
-    fileName: string;
-    price?: number;
+  public type: string;
+  public category: string;
+  public comment: string;
+  public fileName: string;
+  public price?: number;
 
-    constructor(type: string, category: string, comment: string, fileName:string, price?:number) {
-        this.type = type;
-        this.category = category;
-        this.comment = comment;
-        this.fileName = fileName;
-        this.price = price;
-    }
+  public constructor(type: string, category: string, comment: string, fileName: string, price?: number) {
+    this.type = type;
+    this.category = category;
+    this.comment = comment;
+    this.fileName = fileName;
+    this.price = price;
+  }
 }

@@ -1,13 +1,13 @@
-import CodeQualityInformation from "./codeQualityInformation";
+import CodeQualityInformation from './codeQualityInformation';
 
 export default class CodeQualityInformationHistory {
-    codeQualityInformationBag: Array<CodeQualityInformation>;
+  public codeQualityInformationBag: CodeQualityInformation[];
 
-    constructor() {
-        this.codeQualityInformationBag = new Array<CodeQualityInformation>();
-    }
+  public constructor() {
+    this.codeQualityInformationBag = new Array<CodeQualityInformation>();
+  }
 
-    addCodeQualityInformation(codeQualityInformation: CodeQualityInformation): void {
-        this.codeQualityInformationBag.push(codeQualityInformation);
-    }
+  public addCodeQualityInformation(codeQualityInformation: CodeQualityInformation): void {
+    this.codeQualityInformationBag.push(codeQualityInformation);
+  }
 }
