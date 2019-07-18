@@ -31,16 +31,21 @@ export default class Config {
 
   public constructor(directoryPath: string) {
     const defaultConfigFile = fs.readFileSync(path.resolve(__dirname, '../../.tyrion-config.json'), 'utf-8');
-    const defaultConfig = JSON.parse(defaultConfigFile) as TyrionConfig;
-
+    const defaultConfig = JSON.parse(defaultConfigFile);
     const projectConfigPath = directoryPath + '/.tyrion-config.json';
 
     if (fs.existsSync(projectConfigPath)) {
       const projectConfigFile = fs.readFileSync(projectConfigPath, 'utf-8');
-      const projectConfig = JSON.parse(projectConfigFile.toString()) as TyrionConfig;
+      const projectConfig = JSON.parse(projectConfigFile.toString());
+
+      // Ensure that the prices are numbers and not strings
+      for (let key in projectConfig['pricer']) {
+        projectConfig['pricer'][key] = parseInt(projectConfig['pricer'][key]);
+      }
+
       this.config = Object.assign(defaultConfig, projectConfig) as TyrionConfig;
     } else {
-      this.config = defaultConfig;
+      this.config = defaultConfig as TyrionConfig;
     }
 
     this.prices = this.config.pricer as Prices;
