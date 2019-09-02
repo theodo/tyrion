@@ -220,7 +220,7 @@ export default class Collector {
 
     // Process DEBT_TYPE:SUB_TYPE
     const types = lineElements[0].split(':');
-    const debtType = types[0];
+    const debtType = types[0] || 'OTHER';
     const debtCategory = types[1] ? types[1] : '';
 
     // Process price:PRICE
