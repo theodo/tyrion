@@ -4,15 +4,27 @@ import _ from 'lodash';
 
 import DateHelper from '../utils/dateHelper';
 import CodeQualityInformationHistory from '../model/codeQualityInformationHistory';
+import Debt from '../model/debt';
+import DebtPareto from '../model/debtPareto';
 
 const reportName = 'tyrion_report.html';
 
 export default class TemplateRenderer {
-  public static renderHtmlGraph(
+  private static renderGraph(template: string, data: {}) {
+    const compiled = _.template(template.toString());
+    const htmlGraph = compiled(data);
+    const reportPath = path.resolve(reportName);
+
+    fs.writeFileSync(reportPath, htmlGraph);
+
+    return reportPath;
+  }
+
+  public static renderHistoryGraph(
     codeQualityInformationHistory: CodeQualityInformationHistory,
     standard: number,
   ): string {
-    const file = fs.readFileSync(path.resolve(__dirname, '../template/google_charts/report.html'), 'utf-8');
+    const file = fs.readFileSync(path.resolve(__dirname, '../template/google_charts/history_report.html'), 'utf-8');
 
     const debtGraphData = [];
 
@@ -25,12 +37,15 @@ export default class TemplateRenderer {
       debtGraphData.push(debtGraphDataPoint);
     }
 
-    const compiled = _.template(file.toString());
-    const htmlGraph = compiled({ dataDebt: debtGraphData, standard: standard });
-    const reportPath = path.resolve(reportName);
+    return this.renderGraph(file, { dataDebt: debtGraphData, standard: standard });
+  }
 
-    fs.writeFileSync(reportPath, htmlGraph);
+  public static renderTypeParetoGraph(debtParetos: Map<string, DebtPareto>): string {
+    const file = fs.readFileSync(
+      path.resolve(__dirname, '../template/google_charts/pareto_by_debt_type_report.html'),
+      'utf-8',
+    );
 
-    return reportPath;
+    return this.renderGraph(file, { dataDebt: debtParetos });
   }
 }
