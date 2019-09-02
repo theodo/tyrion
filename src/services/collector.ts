@@ -6,6 +6,7 @@ import dateHelper from '../utils/dateHelper';
 import fs from 'fs';
 import glob from 'glob';
 import nodeGit from 'nodegit';
+import isEmpty from 'lodash/isEmpty';
 
 import { Pricer } from './pricer';
 import pathHelper from '../utils/pathHelper';
@@ -278,10 +279,7 @@ export default class Collector {
       return undefined;
     }
 
-    if (lineElements[1].startsWith('price:')) {
-      parseInt(lineElements[1].split(':')[1]);
-    }
-
-    return undefined;
+    const priceAnnotation = lineElements.filter(lineElement => lineElement.startsWith('price:'));
+    return !isEmpty(priceAnnotation) ? parseInt(priceAnnotation[0].split(':')[1]) : undefined;
   }
 }
