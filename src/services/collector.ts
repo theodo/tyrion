@@ -226,8 +226,9 @@ export default class Collector {
 
     // Process price:PRICE
     const price = this.getPrice(lineElements);
+    const { isContagious, isDangerous } = this.getDebtPriorization(lineElements);
 
-    return new DebtItem(debtType, debtCategory, comment, fileName, price);
+    return new DebtItem(debtType, debtCategory, comment, fileName, price, isContagious, isDangerous);
   }
 
   /**
@@ -237,7 +238,7 @@ export default class Collector {
    * @param fileName
    * @param tag
    */
-  private parseJocondeLine(line: string, fileName: string, tag: string): DebtItem {
+  private parseJocondeLine(line: string, fileName: string, tag: string): Joconde {
     const lineWithoutTag = line.substr(line.indexOf(tag) + tag.length + 1);
 
     const comment = this.parseDebtLineComment(line);
@@ -281,5 +282,15 @@ export default class Collector {
 
     const priceAnnotation = lineElements.filter(lineElement => lineElement.startsWith('price:'));
     return !isEmpty(priceAnnotation) ? parseInt(priceAnnotation[0].split(':')[1]) : undefined;
+  }
+
+  private getDebtPriorization(lineElements: string[]): { isContagious: boolean; isDangerous: boolean } {
+    if (lineElements.length < 2) {
+      return { isContagious: false, isDangerous: false };
+    }
+
+    const isContagious = lineElements.includes('isContagious');
+    const isDangerous = lineElements.includes('isDangerous');
+    return { isContagious, isDangerous };
   }
 }
