@@ -289,8 +289,8 @@ export default class Collector {
       return { isContagious: false, isDangerous: false };
     }
 
-    const isContagious = lineElements.includes('isContagious');
-    const isDangerous = lineElements.includes('isDangerous');
+    const isContagious = lineElements.includes('contagious');
+    const isDangerous = lineElements.includes('dangerous');
     return { isContagious, isDangerous };
   }
 }
