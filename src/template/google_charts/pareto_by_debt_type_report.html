@@ -5,12 +5,28 @@
       google.charts.load('current', {packages: ['corechart', 'bar']});
       google.charts.setOnLoadCallback(drawChart);
 
-      const debtData =  [["Type","Debt Score"], <% dataDebt.forEach(function(debt) { %>["<%- debt.type %>", <%- debt.debtScore %>],<% }); %>];
+      const debtData =  [
+        ["Type","Critical Debt", "Dangerous Debt", "Contagious Debt", "Idle Debt"],
+        <% dataDebt.forEach(function(debt) { %>["<%- debt.type %>",
+          <%- debt.debtScoreByPriorization.isCritical %>,
+          <%- debt.debtScoreByPriorization.isDangerous %>,
+          <%- debt.debtScoreByPriorization.isContagious %>,
+          <%- debt.debtScoreByPriorization.isIdle %>],
+      <% }); %>];
+
 
       function drawChart() {
-          var data = google.visualization.arrayToDataTable(debtData);
-          var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
-          chart.draw(data);
+        var data = google.visualization.arrayToDataTable(debtData);
+        var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+        chart.draw(data, {
+          isStacked: true,
+          series: {
+            0: { color: '#a83232' }, // red
+            1: { color: '#de7f50' }, // orange
+            2: { color: '#deb850' }, // yellow
+            3: { color: '#a5a899' }, // grey
+          },
+        });
       }
     </script>
   </head>

@@ -6,6 +6,7 @@ import dateHelper from '../utils/dateHelper';
 import fs from 'fs';
 import glob from 'glob';
 import nodeGit from 'nodegit';
+import isEmpty from 'lodash/isEmpty';
 
 import { Pricer } from './pricer';
 import pathHelper from '../utils/pathHelper';
@@ -225,8 +226,9 @@ export default class Collector {
 
     // Process price:PRICE
     const price = this.getPrice(lineElements);
+    const { isContagious, isDangerous } = this.getDebtPriorization(lineElements);
 
-    return new DebtItem(debtType, debtCategory, comment, fileName, price);
+    return new DebtItem(debtType, debtCategory, comment, fileName, price, isContagious, isDangerous);
   }
 
   /**
@@ -236,7 +238,7 @@ export default class Collector {
    * @param fileName
    * @param tag
    */
-  private parseJocondeLine(line: string, fileName: string, tag: string): DebtItem {
+  private parseJocondeLine(line: string, fileName: string, tag: string): Joconde {
     const lineWithoutTag = line.substr(line.indexOf(tag) + tag.length + 1);
 
     const comment = this.parseDebtLineComment(line);
@@ -274,14 +276,15 @@ export default class Collector {
    * @param lineElements ["DEBT_TYPE:SUB_TYPE", "price:50"] or ["DEBT_TYPE:SUB_TYPE"]
    */
   private getPrice(lineElements: string[]): number | undefined {
-    if (lineElements.length < 2) {
-      return undefined;
-    }
+    const priceAnnotation = lineElements.filter(lineElement => lineElement.startsWith('price:'));
 
-    if (lineElements[1].startsWith('price:')) {
-      parseInt(lineElements[1].split(':')[1]);
-    }
+    return !isEmpty(priceAnnotation) ? parseInt(priceAnnotation[0].split(':')[1]) : undefined;
+  }
 
-    return undefined;
+  private getDebtPriorization(lineElements: string[]): { isContagious: boolean; isDangerous: boolean } {
+    const isContagious = lineElements.includes('contagious');
+    const isDangerous = lineElements.includes('dangerous');
+
+    return { isContagious, isDangerous };
   }
 }
