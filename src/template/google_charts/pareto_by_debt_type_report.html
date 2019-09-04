@@ -6,7 +6,7 @@
       google.charts.setOnLoadCallback(drawChart);
 
       const debtData =  [
-        ["Type","Critical Debt", "Dangerous Debt", "Contagious Debt", "Iddle Debt"],
+        ["Type","Critical Debt", "Dangerous Debt", "Contagious Debt", "Idle Debt"],
         <% dataDebt.forEach(function(debt) { %>["<%- debt.type %>",
           <%- debt.debtScoreByPriorization.isCritical %>,
           <%- debt.debtScoreByPriorization.isDangerous %>,

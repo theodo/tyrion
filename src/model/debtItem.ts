@@ -13,15 +13,15 @@ export default class DebtItem {
     comment: string,
     fileName: string,
     price?: number,
-    isContagious?: boolean,
-    isDangerous?: boolean,
+    isContagious: boolean = false,
+    isDangerous: boolean = false,
   ) {
     this.type = type;
     this.category = category;
     this.comment = comment;
     this.fileName = fileName;
     this.price = price;
-    this.isContagious = typeof isContagious === 'boolean' ? isContagious : false;
-    this.isDangerous = typeof isDangerous === 'boolean' ? isDangerous : false;
+    this.isContagious = isContagious;
+    this.isDangerous = isDangerous;
   }
 }

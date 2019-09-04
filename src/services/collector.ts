@@ -276,21 +276,15 @@ export default class Collector {
    * @param lineElements ["DEBT_TYPE:SUB_TYPE", "price:50"] or ["DEBT_TYPE:SUB_TYPE"]
    */
   private getPrice(lineElements: string[]): number | undefined {
-    if (lineElements.length < 2) {
-      return undefined;
-    }
-
     const priceAnnotation = lineElements.filter(lineElement => lineElement.startsWith('price:'));
+
     return !isEmpty(priceAnnotation) ? parseInt(priceAnnotation[0].split(':')[1]) : undefined;
   }
 
   private getDebtPriorization(lineElements: string[]): { isContagious: boolean; isDangerous: boolean } {
-    if (lineElements.length < 2) {
-      return { isContagious: false, isDangerous: false };
-    }
-
     const isContagious = lineElements.includes('contagious');
     const isDangerous = lineElements.includes('dangerous');
+
     return { isContagious, isDangerous };
   }
 }
