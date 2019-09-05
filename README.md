@@ -48,6 +48,7 @@ Run `tyrion` with the following options
 ````
   -p, --path [scanDirectory]  The path of the directory you want to analyse
   -e, --evolution [days]      Get the evolution of the debt since X days
+  --pareto                    Get the pareto by type / prioritization
   -f, --filter [type]         filter by a particular debt type
   -n, --nobrowser [type]      Don't open the report after being generated
   -h, --help                  output usage information
@@ -57,6 +58,9 @@ Example:
 
 - `tyrion -p ./src` to get the current debt score
 - `tyrion --evolution 28 -p .` to get the evolution of the debt during 28 days starting from the last commit.
+- `tyrion --parero -p .` to get the debt pareto by type / prioritization
+
+![graph pareto](./docs/pareto-graph.png)
 
 ## Writing debt comment
 
@@ -94,14 +98,14 @@ You can add a comment to provide more details about the debt item by following t
 
 ````
 /**
- * @debt DEBT_TYPE:SUB_TYPE "Author: comment"
+ * @debt DEBT_TYPE:SUB_TYPE price:some_price contagious dangerous "Author: comment"
  */
 ````
 
 A complete example could be:
 ````
 /**
- * @debt security:sql-injection "Maximet: The request is not escaped when being called from the command"
+ * @debt security:sql-injection price:10 contagious dangerous "Maximet: The request is not escaped when being called from the command"
  */
 ````
 

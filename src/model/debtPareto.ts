@@ -1,8 +1,8 @@
 import DebtItem from './debtItem';
 import { Pricer } from '../services/pricer';
 
-type PriorizationTypes = 'isCritical' | 'isDangerous' | 'isContagious' | 'isIdle';
-const PRIORIZATION_TYPES: { [priorizationType: string]: PriorizationTypes } = {
+type PrioritizationTypes = 'isCritical' | 'isDangerous' | 'isContagious' | 'isIdle';
+const PRIORIZATION_TYPES: { [prioritizationType: string]: PrioritizationTypes } = {
   IS_CRITICAL: 'isCritical',
   IS_DANGEROUS: 'isDangerous',
   IS_CONTAGIOUS: 'isContagious',
@@ -14,14 +14,14 @@ export default class DebtPareto {
   public type: string;
 
   public debtScore: number;
-  public debtScoreByPriorization: { [priorizationType in PriorizationTypes]: number };
+  public debtScoreByPrioritization: { [prioritizationType in PrioritizationTypes]: number };
   private pricer: Pricer;
 
   public constructor(type: string, pricer: Pricer) {
     this.type = type;
     this.debtItems = new Array<DebtItem>();
     this.debtScore = 0;
-    this.debtScoreByPriorization = {
+    this.debtScoreByPrioritization = {
       isCritical: 0,
       isDangerous: 0,
       isContagious: 0,
@@ -34,10 +34,10 @@ export default class DebtPareto {
     this.debtItems.push(debtItem);
     const debtScore = this.pricer.getPrice(debtItem);
     this.debtScore += debtScore;
-    this.debtScoreByPriorization[DebtPareto.getPriorizationType(debtItem)] += debtScore;
+    this.debtScoreByPrioritization[DebtPareto.getPrioritizationType(debtItem)] += debtScore;
   }
 
-  private static getPriorizationType({ isContagious, isDangerous }: DebtItem): PriorizationTypes {
+  private static getPrioritizationType({ isContagious, isDangerous }: DebtItem): PrioritizationTypes {
     switch (true) {
       case isContagious && isDangerous:
         return PRIORIZATION_TYPES.IS_CRITICAL;
