@@ -29,12 +29,12 @@ We defined technical debt as every piece of code or architecture that prevent qu
 Our strong hypothesis is that monitoring the technical debt is the best way to prevent it to explode. At [Theodo](https://www.theodo.fr), we tried different ways of managing and measuring it in the past
 (Trello cards, google docs, post-it, ..) but we never find a simple solution that would allow us to:
 
-* 🗺️ Discover and map the debt while coding
-* 📈 Quickly get a measure of the current debt
+* 🗺️ Discover and document the debt while coding
 * ♻️ Update or remove the debt item when it has changed or been removed
+* 📈 Quickly get a measure and an overview of the current debt
 * ⏭ Know and prioritize what is the best next debt item the team should tackle down
 
-Tyrion will help you at least for the first three points by suggesting you to put the debt information of your project right into the code and providing you a tool that will then calculate the total debt of your project for you.
+Tyrion will help you at least on all four points by suggesting you to put the debt information of your project right into the code and providing you a tool that will then provide an overview and calculate the total debt of your project for you.
 As the information will be directly in the code, it will be very easy to add, update and delete each item. Then calculate it with Tyrion is done in an instant.
 
 ## Installation:
