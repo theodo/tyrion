@@ -42,7 +42,7 @@ const config = new Config(scanDirectory);
 const collector = new Collector(scanDirectory, program.filter, config);
 
 switch (true) {
-  case program.evolution:
+  case Boolean(program.evolution):
     const historyNumberOfDays = isNaN(parseInt(program.evolution)) ? HISTORY_DEFAULT_NUMBER_OF_DAYS : program.evolution;
     console.info('Tyrion will scan ' + historyNumberOfDays + ' days backward from the last commit on master');
     const codeQualityInformationHistory = collector.collectHistory(historyNumberOfDays);
