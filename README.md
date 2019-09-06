@@ -19,23 +19,24 @@ To be able to deliver code of high quality, a team needs to:
 * 📆 Have enough time
 * 🗹 Know how to do quality
 * 🛠️ Have the right tools
-* 📈 Be able to measure quality
+* 🌡️ Be able to measure quality
 
-The goal of tyrion is to help you on the last point "📈 Be able to measure quality".
+The goal of tyrion is to help you on the last point "🌡 Be able to measure quality".
 
 ### Monitoring technical debt
 
-We defined technical debt as every piece of code or architecture that prevent quality.
-Our strong hypothesis is that monitoring the technical debt is the best way to prevent it to explode. At [Theodo](https://www.theodo.fr), we tried different ways of managing and measuring it in the past
-(Trello cards, google docs, post-it, ..) but we never find a simple solution that would allow us to:
+We defined technical debt as every piece of code or architecture that prevents quality.
+Through various experiments, we saw that when we were monitoring the evolution of the technical debt it was more likely to prevent it to increase.
+We tried different ways of managing and measuring it in the past (Trello cards, google docs, post-it, ..) but we never found a painless solution that would allow us to:
 
-* 🗺️ Discover and map the debt while coding
-* 📈 Quickly get a measure of the current debt
-* ♻️ Update or remove the debt item when it has changed or been removed
-* ⏭ Know and prioritize what is the best next debt item the team should tackle down
+* 🔍️ Document and update the debt while coding
+* 📊 Quickly get an overview and the evolution of the debt
+* 👩‍🔧 Have a simple prioritization of the debt 
 
-Tyrion will help you at least for the first three points by suggesting you to put the debt information of your project right into the code and providing you a tool that will then calculate the total debt of your project for you.
-As the information will be directly in the code, it will be very easy to add, update and delete each item. Then calculate it with Tyrion is done in an instant.
+So we created Tyrion. You can now:
+
+* Document and update your debt directly in the code with specific comments (🔍)
+* Automatically get charts and paretos that help you decide which part of the code you should improve next (📊, 👩‍🔧)
 
 ## Installation:
 
