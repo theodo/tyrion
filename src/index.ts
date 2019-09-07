@@ -38,7 +38,7 @@ if (!scanDirectory) {
 
 const config = new Config(scanDirectory);
 
-const collector = Collector.fromConfig(scanDirectory, program.filter, config);
+const collector = Collector.createFromConfig(scanDirectory, program.filter, config);
 
 switch (true) {
   case Boolean(program.evolution):
