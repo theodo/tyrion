@@ -1,16 +1,17 @@
 import Table from 'cli-table';
 import colors from 'colors';
-
-import DebtPareto from '../model/debtPareto';
-import DebtItem from '../model/debtItem';
-import Debt from '../model/debt';
-import CodeQualityInformation from '../model/codeQualityInformation';
-import Louvre from '../model/louvre';
-import JocondePareto from '../model/jocondePareto';
-import Joconde from '../model/joconde';
+import {
+  DebtItemInterface,
+  DebtParetoInterface,
+  CodeQualityInformationInterface,
+  DebtInterface,
+  LouvreInterface,
+  JocondeParetoInterface,
+  JocondeInterface,
+} from '../model/types';
 
 export default class CodeQualityInformationDisplayer {
-  public static display(codeQualityInformation: CodeQualityInformation): void {
+  public static display(codeQualityInformation: CodeQualityInformationInterface): void {
     if (codeQualityInformation.debt) {
       this.displayDebtSummary(codeQualityInformation.debt);
     }
@@ -20,7 +21,7 @@ export default class CodeQualityInformationDisplayer {
     }
   }
 
-  private static displayDebtSummary(debt: Debt): void {
+  private static displayDebtSummary(debt: DebtInterface): void {
     let totalItems = 0;
     console.info(colors.green('\n ♻️♻️♻️ Debt Information ♻️♻️♻️'));
 
@@ -28,9 +29,9 @@ export default class CodeQualityInformationDisplayer {
       head: [colors.bold('Type'), colors.bold('Score'), colors.bold('File'), colors.bold('Comment')],
     });
 
-    debt.debtParetos.forEach((debtPareto: DebtPareto): void => {
+    debt.debtParetos.forEach((debtPareto: DebtParetoInterface): void => {
       const debtItemsNumber = debtPareto.debtItems.length;
-      debtPareto.debtItems.map((debtItem: DebtItem): void => {
+      debtPareto.debtItems.map((debtItem: DebtItemInterface): void => {
         table.push([debtItem.type, debt.pricer.getPrice(debtItem), debtItem.fileName, debtItem.comment]);
       });
       totalItems += debtItemsNumber;
@@ -45,7 +46,7 @@ export default class CodeQualityInformationDisplayer {
     console.log(table.toString());
   }
 
-  private static displayLouvre(louvre: Louvre): void {
+  private static displayLouvre(louvre: LouvreInterface): void {
     let totalItems = 0;
     console.info(colors.green('\n 🖼🖼🖼 Quality Information 🖼🖼🖼'));
 
@@ -53,9 +54,9 @@ export default class CodeQualityInformationDisplayer {
       head: [colors.bold('Type'), colors.bold('File'), colors.bold('Comment')],
     });
 
-    louvre.jocondeParetos.forEach((jocondePareto: JocondePareto): void => {
+    louvre.jocondeParetos.forEach((jocondePareto: JocondeParetoInterface): void => {
       const jocondeNumber = jocondePareto.jocondes.length;
-      jocondePareto.jocondes.map((joconde: Joconde): void => {
+      jocondePareto.jocondes.map((joconde: JocondeInterface): void => {
         table.push([joconde.type, joconde.fileName, joconde.comment]);
       });
       totalItems += jocondeNumber;

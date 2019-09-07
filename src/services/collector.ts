@@ -14,25 +14,32 @@ import CodeQualityInformation from '../model/codeQualityInformation';
 import Louvre from '../model/louvre';
 import CodeQualityInformationHistory from '../model/codeQualityInformationHistory';
 import Joconde from '../model/joconde';
-import Config from './config';
+import {
+  PricerInterface,
+  DebtItemInterface,
+  CodeQualityInformationInterface,
+  CodeQualityInformationHistoryInterface,
+  JocondeInterface,
+  ConfigInterface,
+} from '../model/types';
 
 const debtTags = ['@debt', 'TODO', 'FIXME'];
 const jocondeTags = ['@best', '@standard', 'JOCONDE'];
 
 export default class Collector {
   public scanningPath: string;
-  private readonly pricer: Pricer;
+  private readonly pricer: PricerInterface;
   private readonly filter: string;
   private readonly ignorePaths: string[];
 
-  public constructor(scanningPath: string, filter: string, config: Config) {
+  public constructor(scanningPath: string, filter: string, config: ConfigInterface) {
     this.scanningPath = scanningPath;
     this.filter = filter;
     this.pricer = new Pricer(config.prices);
     this.ignorePaths = config.ignorePaths;
   }
 
-  public async collect(): Promise<CodeQualityInformation> {
+  public async collect(): Promise<CodeQualityInformationInterface> {
     const allNotHiddenFiles = this.scanningPath + '/**/*.*';
     const notHiddenFiles = glob.sync(allNotHiddenFiles, { nodir: true });
     const allHiddenFiles = this.scanningPath + '/**/.*';
@@ -54,7 +61,7 @@ export default class Collector {
     return codeQualityInformation;
   }
 
-  public async collectHistory(historyNumberOfDays: number): Promise<CodeQualityInformationHistory> {
+  public async collectHistory(historyNumberOfDays: number): Promise<CodeQualityInformationHistoryInterface> {
     const codeQualityInformationHistory = new CodeQualityInformationHistory();
 
     const gitPath = pathHelper.getGitRepositoryPath(this.scanningPath);
@@ -107,7 +114,7 @@ export default class Collector {
     });
   }
 
-  private async collectDebtFromCommit(commit: Commit): Promise<CodeQualityInformation> {
+  private async collectDebtFromCommit(commit: Commit): Promise<CodeQualityInformationInterface> {
     const debt = new Debt(this.pricer);
     const louvre = new Louvre();
     const codeQualityInformation = new CodeQualityInformation(debt, louvre);
@@ -138,7 +145,7 @@ export default class Collector {
     });
   }
 
-  private async parseEntry(entry: TreeEntry, codeQualityInformation: CodeQualityInformation): Promise<void> {
+  private async parseEntry(entry: TreeEntry, codeQualityInformation: CodeQualityInformationInterface): Promise<void> {
     const those = this;
     return new Promise((resolve): void => {
       const blob = entry.getBlob();
@@ -152,7 +159,7 @@ export default class Collector {
   }
 
   //TODO: quality "Should split this file into multiple files including one service dedicated to the parsing
-  private parseFile(file: string, fileName: string, codeQualityInformation: CodeQualityInformation): void {
+  private parseFile(file: string, fileName: string, codeQualityInformation: CodeQualityInformationInterface): void {
     let lines: string[] = file.split('\n');
 
     lines = lines.filter((line): boolean => this.isComment(line));
@@ -208,7 +215,7 @@ export default class Collector {
    * @param line
    * @param fileName
    */
-  private parseDebtLine(line: string, fileName: string, debtTag: string): DebtItem {
+  private parseDebtLine(line: string, fileName: string, debtTag: string): DebtItemInterface {
     const lineWithoutDebtTag = line.substr(line.indexOf(debtTag) + debtTag.length + 1);
 
     const comment = this.parseDebtLineComment(line);
@@ -238,7 +245,7 @@ export default class Collector {
    * @param fileName
    * @param tag
    */
-  private parseJocondeLine(line: string, fileName: string, tag: string): Joconde {
+  private parseJocondeLine(line: string, fileName: string, tag: string): JocondeInterface {
     const lineWithoutTag = line.substr(line.indexOf(tag) + tag.length + 1);
 
     const comment = this.parseDebtLineComment(line);

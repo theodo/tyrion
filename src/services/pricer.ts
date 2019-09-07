@@ -1,17 +1,16 @@
-import DebtItem from '../model/debtItem';
-import { Prices } from './config';
+import { DebtItemInterface, PricesInterface } from '../model/types';
 
 export class Pricer {
-  private readonly prices: Prices;
+  private readonly prices: PricesInterface;
 
-  public constructor(prices: Prices) {
+  public constructor(prices: PricesInterface) {
     this.prices = prices;
   }
 
   /**
    * @param debt
    */
-  public getPrice(debt: DebtItem): number {
+  public getPrice(debt: DebtItemInterface): number {
     if (debt.price) {
       return debt.price;
     }

@@ -1,15 +1,15 @@
-import Joconde from './joconde';
+import { JocondeInterface, JocondeParetoInterface } from './types';
 
-export default class JocondePareto {
-  public jocondes: Joconde[];
+export default class JocondePareto implements JocondeParetoInterface {
+  public jocondes: JocondeInterface[];
   public type: string;
 
   public constructor(type: string) {
     this.type = type;
-    this.jocondes = new Array<Joconde>();
+    this.jocondes = new Array<JocondeInterface>();
   }
 
-  public addJoconde(joconde: Joconde): void {
+  public addJoconde(joconde: JocondeInterface): void {
     this.jocondes.push(joconde);
   }
 }
