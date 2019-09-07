@@ -32,11 +32,20 @@ export default class Collector {
   private readonly filter: string;
   private readonly ignorePaths: string[];
 
-  public constructor(scanningPath: string, filter: string, config: ConfigInterface) {
+  public constructor(
+    scanningPath: string,
+    ignorePaths: string[] = [],
+    filter: string = '',
+    pricer: PricerInterface = new Pricer(),
+  ) {
     this.scanningPath = scanningPath;
     this.filter = filter;
-    this.pricer = new Pricer(config.prices);
-    this.ignorePaths = config.ignorePaths;
+    this.pricer = pricer;
+    this.ignorePaths = ignorePaths;
+  }
+
+  public static fromConfig(scanningPath: string, filter: string, config: ConfigInterface) {
+    return new Collector(scanningPath, config.ignorePaths, filter, new Pricer(config.prices));
   }
 
   public async collect(): Promise<CodeQualityInformationInterface> {

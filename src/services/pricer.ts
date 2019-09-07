@@ -3,7 +3,7 @@ import { DebtItemInterface, PricesInterface } from '../model/types';
 export class Pricer {
   private readonly prices: PricesInterface;
 
-  public constructor(prices: PricesInterface) {
+  public constructor(prices: PricesInterface = {}) {
     this.prices = prices;
   }
 
