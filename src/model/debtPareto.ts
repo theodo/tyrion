@@ -1,6 +1,6 @@
 import { PricerInterface, DebtItemInterface, PriorizationTypes, DebtParetoInterface } from './types';
 
-const PRIORIZATION_TYPES: { [priorizationType: string]: PriorizationTypes } = {
+export const PRIORIZATION_TYPES: { [priorizationType: string]: PriorizationTypes } = {
   IS_CRITICAL: 'isCritical',
   IS_DANGEROUS: 'isDangerous',
   IS_CONTAGIOUS: 'isContagious',
