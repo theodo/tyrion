@@ -36,6 +36,8 @@ export type DebtInterface = {
   debtScore: number;
   pricer: PricerInterface;
   addDebtItem: (debtItem: DebtItemInterface) => void;
+  getDebtScoreByType: (type: string) => number;
+  getDebtScoreByPrioritization: (priorizationType: PriorizationTypes) => number;
 };
 
 export type LouvreInterface = {
