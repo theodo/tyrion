@@ -48,13 +48,13 @@ commands:
           command: npm run lint
 
 jobs:
-  install-front:
+  install-packages:
     executor: defaults_typescript
     working_directory: ~/tyrion
     steps:
       - install
 
-  react-tests:
+  tests:
     executor: defaults_typescript
     working_directory: ~/tyrion
     environment:
@@ -62,7 +62,7 @@ jobs:
     steps:
       - npm-tests
 
-  react-linter:
+  typescript-linter:
     executor: defaults_typescript
     working_directory: ~/tyrion
     environment:
@@ -74,10 +74,10 @@ workflows:
   version: 2
   stack:
     jobs:
-      - install-front
-      - react-tests:
+      - install-packages
+      - tests:
           requires:
-            - install-front
-      - react-linter:
+            - install-packages
+      - typescript-linter:
           requires:
-            - install-front
+            - install-packages

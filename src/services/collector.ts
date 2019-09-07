@@ -44,7 +44,7 @@ export default class Collector {
     this.ignorePaths = ignorePaths;
   }
 
-  public static fromConfig(scanningPath: string, filter: string, config: ConfigInterface) {
+  public static createFromConfig(scanningPath: string, filter: string, config: ConfigInterface): Collector {
     return new Collector(scanningPath, config.ignorePaths, filter, new Pricer(config.prices));
   }
 
@@ -292,7 +292,7 @@ export default class Collector {
    * @param lineElements ["DEBT_TYPE:SUB_TYPE", "price:50"] or ["DEBT_TYPE:SUB_TYPE"]
    */
   private getPrice(lineElements: string[]): number | undefined {
-    const priceAnnotation = lineElements.filter(lineElement => lineElement.startsWith('price:'));
+    const priceAnnotation = lineElements.filter((lineElement): boolean => lineElement.startsWith('price:'));
 
     return !isEmpty(priceAnnotation) ? parseInt(priceAnnotation[0].split(':')[1]) : undefined;
   }

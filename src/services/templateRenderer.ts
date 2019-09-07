@@ -8,7 +8,7 @@ import { DebtParetoInterface, CodeQualityInformationHistoryInterface } from '../
 const reportName = 'tyrion_report.html';
 
 export default class TemplateRenderer {
-  private static renderGraph(template: string, data: {}) {
+  private static renderGraph(template: string, data: {}): string {
     const compiled = _.template(template.toString());
     const htmlGraph = compiled(data);
     const reportPath = path.resolve(reportName);
