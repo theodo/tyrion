@@ -1,23 +1,22 @@
-import DebtItem from './debtItem';
-import { Pricer } from '../services/pricer';
 import DebtPareto from './debtPareto';
+import { DebtItemInterface, PricerInterface, DebtParetoInterface, DebtInterface } from './types';
 
-export default class Debt {
-  public debtParetos: Map<string, DebtPareto>;
+export default class Debt implements DebtInterface {
+  public debtParetos: Map<string, DebtParetoInterface>;
   public debtScore: number;
-  public pricer: Pricer;
+  public pricer: PricerInterface;
 
-  public constructor(pricer: Pricer) {
-    this.debtParetos = new Map<string, DebtPareto>();
+  public constructor(pricer: PricerInterface) {
+    this.debtParetos = new Map<string, DebtParetoInterface>();
     this.debtScore = 0;
     this.pricer = pricer;
   }
 
-  public addDebtItem(debtItem: DebtItem): void {
+  public addDebtItem(debtItem: DebtItemInterface): void {
     this.debtScore += this.pricer.getPrice(debtItem);
 
     let debtPareto = this.debtParetos.get(debtItem.type);
-    if (debtPareto instanceof DebtPareto) {
+    if (debtPareto) {
       debtPareto.addDebtItem(debtItem);
     } else {
       debtPareto = new DebtPareto(debtItem.type, this.pricer);

@@ -3,9 +3,7 @@ import path from 'path';
 import _ from 'lodash';
 
 import DateHelper from '../utils/dateHelper';
-import CodeQualityInformationHistory from '../model/codeQualityInformationHistory';
-import Debt from '../model/debt';
-import DebtPareto from '../model/debtPareto';
+import { DebtParetoInterface, CodeQualityInformationHistoryInterface } from '../model/types';
 
 const reportName = 'tyrion_report.html';
 
@@ -21,7 +19,7 @@ export default class TemplateRenderer {
   }
 
   public static renderHistoryGraph(
-    codeQualityInformationHistory: CodeQualityInformationHistory,
+    codeQualityInformationHistory: CodeQualityInformationHistoryInterface,
     standard: number,
   ): string {
     const file = fs.readFileSync(path.resolve(__dirname, '../template/google_charts/history_report.html'), 'utf-8');
@@ -40,7 +38,7 @@ export default class TemplateRenderer {
     return this.renderGraph(file, { dataDebt: debtGraphData, standard: standard });
   }
 
-  public static renderTypeParetoGraph(debtParetos: Map<string, DebtPareto>): string {
+  public static renderTypeParetoGraph(debtParetos: Map<string, DebtParetoInterface>): string {
     const file = fs.readFileSync(
       path.resolve(__dirname, '../template/google_charts/pareto_by_debt_type_report.html'),
       'utf-8',

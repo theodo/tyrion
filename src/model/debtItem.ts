@@ -1,4 +1,6 @@
-export default class DebtItem {
+import { DebtItemInterface } from './types';
+
+export default class DebtItem implements DebtItemInterface {
   public type: string;
   public category: string;
   public comment: string;

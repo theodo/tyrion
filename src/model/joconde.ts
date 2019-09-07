@@ -1,4 +1,6 @@
-export default class Joconde {
+import { JocondeInterface } from './types';
+
+export default class Joconde implements JocondeInterface {
   public type: string;
   public fileName: string;
   public category: string;

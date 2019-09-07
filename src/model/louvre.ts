@@ -1,16 +1,16 @@
 import JocondePareto from './jocondePareto';
-import Joconde from './joconde';
+import { JocondeParetoInterface, JocondeInterface, LouvreInterface } from './types';
 
-export default class Louvre {
-  public jocondeParetos: Map<string, JocondePareto>;
+export default class Louvre implements LouvreInterface {
+  public jocondeParetos: Map<string, JocondeParetoInterface>;
 
   public constructor() {
-    this.jocondeParetos = new Map<string, JocondePareto>();
+    this.jocondeParetos = new Map<string, JocondeParetoInterface>();
   }
 
-  public addJoconde(joconde: Joconde): void {
+  public addJoconde(joconde: JocondeInterface): void {
     let jocondePareto = this.jocondeParetos.get(joconde.type);
-    if (jocondePareto instanceof JocondePareto) {
+    if (jocondePareto) {
       jocondePareto.addJoconde(joconde);
     } else {
       jocondePareto = new JocondePareto(joconde.type);

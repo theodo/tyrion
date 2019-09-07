@@ -1,33 +1,18 @@
 import fs from 'fs';
 import path from 'path';
+import { ConfigInterface, PricesInterface } from '../model/types';
 
-export interface TyrionConfig {
-  pricer: Prices;
+export interface TyrionConfigInterface {
+  pricer: PricesInterface;
   standard: number;
   ignorePath: string[];
 }
 
-export interface Prices {
-  bug: number;
-  architecture: number;
-  security: number;
-  bugRisk: number;
-  securityRisk: number;
-  quality: number;
-  test: number;
-  doc: number;
-  ci: number;
-  deploy: number;
-  devEnv: number;
-  outdated: number;
-  [propName: string]: number;
-}
-
-export default class Config {
-  public readonly prices: Prices;
+export default class Config implements ConfigInterface {
+  public readonly prices: PricesInterface;
   public readonly standard: number;
   public readonly ignorePaths: string[];
-  private readonly config: TyrionConfig;
+  private readonly config: TyrionConfigInterface;
 
   public constructor(directoryPath: string) {
     const defaultConfigFile = fs.readFileSync(path.resolve(__dirname, '../../.tyrion-config.json'), 'utf-8');
@@ -43,12 +28,12 @@ export default class Config {
         projectConfig['pricer'][key] = parseInt(projectConfig['pricer'][key]);
       }
 
-      this.config = Object.assign(defaultConfig, projectConfig) as TyrionConfig;
+      this.config = Object.assign(defaultConfig, projectConfig) as TyrionConfigInterface;
     } else {
-      this.config = defaultConfig as TyrionConfig;
+      this.config = defaultConfig as TyrionConfigInterface;
     }
 
-    this.prices = this.config.pricer as Prices;
+    this.prices = this.config.pricer;
     this.standard = this.config.standard;
     this.ignorePaths = this.config.ignorePath;
   }
