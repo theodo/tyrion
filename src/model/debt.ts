@@ -1,5 +1,5 @@
 import DebtPareto from './debtPareto';
-import { DebtItemInterface, PricerInterface, DebtParetoInterface, DebtInterface, PriorizationTypes } from './types';
+import { DebtItemInterface, PricerInterface, DebtParetoInterface, DebtInterface, PrioritizationTypes } from './types';
 
 export default class Debt implements DebtInterface {
   public debtParetos: Map<string, DebtParetoInterface>;
@@ -30,10 +30,10 @@ export default class Debt implements DebtInterface {
     return pareto ? pareto.debtScore : 0;
   }
 
-  public getDebtScoreByPrioritization(priorizationType: PriorizationTypes): number {
+  public getDebtScoreByPrioritization(prioritizationType: PrioritizationTypes): number {
     let debtScore = 0;
     for (const [, pareto] of this.debtParetos) {
-      debtScore += pareto.debtScoreByPriorization[priorizationType];
+      debtScore += pareto.debtScoreByPrioritization[prioritizationType];
     }
     return debtScore;
   }

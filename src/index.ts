@@ -56,7 +56,7 @@ switch (true) {
         }
       })
       .catch((error): void => console.error(error));
-
+    break;
   default:
     const codeQualityInformationPromise = collector.collect();
     codeQualityInformationPromise
