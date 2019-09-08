@@ -8,10 +8,10 @@
       const debtData =  [
         ["Type","Critical Debt", "Dangerous Debt", "Contagious Debt", "Idle Debt"],
         <% dataDebt.forEach(function(debt) { %>["<%- debt.type %>",
-          <%- debt.debtScoreByPriorization.isCritical %>,
-          <%- debt.debtScoreByPriorization.isDangerous %>,
-          <%- debt.debtScoreByPriorization.isContagious %>,
-          <%- debt.debtScoreByPriorization.isIdle %>],
+          <%- debt.debtScoreByPrioritization.isCritical %>,
+          <%- debt.debtScoreByPrioritization.isDangerous %>,
+          <%- debt.debtScoreByPrioritization.isContagious %>,
+          <%- debt.debtScoreByPrioritization.isIdle %>],
       <% }); %>];
 
 

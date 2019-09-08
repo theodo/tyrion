@@ -1,4 +1,4 @@
-export type PriorizationTypes = 'isCritical' | 'isDangerous' | 'isContagious' | 'isIdle';
+export type PrioritizationTypes = 'isCritical' | 'isDangerous' | 'isContagious' | 'isIdle';
 
 export type ItemInterface = {
   category: string;
@@ -21,7 +21,7 @@ export type PricerInterface = {
 export type DebtParetoInterface = {
   debtItems: DebtItemInterface[];
   debtScore: number;
-  debtScoreByPriorization: { [priorizationType in PriorizationTypes]: number };
+  debtScoreByPrioritization: { [prioritizationType in PrioritizationTypes]: number };
   type: string;
   addDebtItem: (debtItem: DebtItemInterface) => void;
 };
@@ -37,7 +37,7 @@ export type DebtInterface = {
   pricer: PricerInterface;
   addDebtItem: (debtItem: DebtItemInterface) => void;
   getDebtScoreByType: (type: string) => number;
-  getDebtScoreByPrioritization: (priorizationType: PriorizationTypes) => number;
+  getDebtScoreByPrioritization: (prioritizationType: PrioritizationTypes) => number;
 };
 
 export type LouvreInterface = {

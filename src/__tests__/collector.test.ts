@@ -1,5 +1,5 @@
 import Collector from '../services/collector';
-import { PRIORIZATION_TYPES } from '../model/debtPareto';
+import { PRIORITIZATION_TYPES } from '../model/debtPareto';
 import Config from '../services/config';
 import { CodeQualityInformationInterface } from '../model/types';
 
@@ -12,10 +12,10 @@ describe('collector', (): void => {
     return collector.collect().then(({ debt }): void => {
       expect(debt.debtScore).toEqual(224);
 
-      expect(debt.getDebtScoreByPrioritization(PRIORIZATION_TYPES.IS_CRITICAL)).toEqual(0);
-      expect(debt.getDebtScoreByPrioritization(PRIORIZATION_TYPES.IS_DANGEROUS)).toEqual(100);
-      expect(debt.getDebtScoreByPrioritization(PRIORIZATION_TYPES.IS_CONTAGIOUS)).toEqual(5);
-      expect(debt.getDebtScoreByPrioritization(PRIORIZATION_TYPES.IS_IDLE)).toEqual(119);
+      expect(debt.getDebtScoreByPrioritization(PRIORITIZATION_TYPES.IS_CRITICAL)).toEqual(0);
+      expect(debt.getDebtScoreByPrioritization(PRIORITIZATION_TYPES.IS_DANGEROUS)).toEqual(100);
+      expect(debt.getDebtScoreByPrioritization(PRIORITIZATION_TYPES.IS_CONTAGIOUS)).toEqual(5);
+      expect(debt.getDebtScoreByPrioritization(PRIORITIZATION_TYPES.IS_IDLE)).toEqual(119);
 
       expect(debt.getDebtScoreByType('dev-env')).toEqual(2);
       expect(debt.getDebtScoreByType('quality')).toEqual(20);
