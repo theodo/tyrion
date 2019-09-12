@@ -160,8 +160,6 @@ You can ignore files containing certain strings by using the `"ignorePath"` opti
 ]
 ```
 
-Todo: add capability for multiple ignore paths in array (currently only takes singular string)
-
 ## Contribute
 
 1. Install the dependencies `npm i`
