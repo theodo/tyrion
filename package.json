@@ -13,7 +13,7 @@
   "scripts": {
     "tsc": "tsc",
     "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
-    "exec": "ts-node src/index.ts -p ./test_project",
+    "exec": "ts-node src/index.ts",
     "build": "tsc -p . && cp -r src/template/ lib/template/",
     "test": "jest",
     "test:watch": "jest --watch",
