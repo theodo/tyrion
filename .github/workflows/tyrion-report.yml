@@ -1,0 +1,19 @@
+name: Generate tyrion report
+# This workflow is triggered on pushes to the repository.
+on: [push]
+
+jobs:
+  build:
+    name: Generate tyrion report
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install tyrion
+        run: npm i
+      - name: Run tyrion
+        run: npm run exec ./src
+      - name: Store tyrion generated pareto
+        uses: actions/upload-artifact@v1
+        with:
+          name: tyrion_report.html
+          path: tyrion_report.html
