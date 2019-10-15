@@ -1,6 +1,7 @@
 name: Generate tyrion report
-# This workflow is triggered on pushes to the repository.
-on: [push]
+on:
+  schedule:
+    - cron:  '* * * * 0' # runs every sunday
 
 jobs:
   build:
