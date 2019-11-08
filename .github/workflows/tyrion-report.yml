@@ -1,7 +1,7 @@
 name: Generate tyrion report
 on:
   schedule:
-    - cron:  '* * * * 0' # runs every sunday
+    - cron:  '0 0 * * 0' # runs every sunday at midnight
 
 jobs:
   build:
