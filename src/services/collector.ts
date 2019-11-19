@@ -244,7 +244,15 @@ export default class Collector {
     const price = this.getPrice(lineElements);
     const { isContagious, isDangerous } = this.getDebtPriorization(lineElements);
 
-    return new DebtItem(debtType, debtCategory, comment, fileName, price, isContagious, isDangerous);
+    return new DebtItem({
+      type: debtType,
+      category: debtCategory,
+      comment,
+      fileName,
+      price,
+      isContagious,
+      isDangerous,
+    });
   }
 
   /**
