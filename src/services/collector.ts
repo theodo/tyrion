@@ -11,20 +11,16 @@ import isEmpty from 'lodash/isEmpty';
 import { Pricer } from './pricer';
 import pathHelper from '../utils/pathHelper';
 import CodeQualityInformation from '../model/codeQualityInformation';
-import Louvre from '../model/louvre';
 import CodeQualityInformationHistory from '../model/codeQualityInformationHistory';
-import Joconde from '../model/joconde';
 import {
   PricerInterface,
   DebtItemInterface,
   CodeQualityInformationInterface,
   CodeQualityInformationHistoryInterface,
-  JocondeInterface,
   ConfigInterface,
 } from '../model/types';
 
 const debtTags = ['@debt', 'TODO', 'FIXME'];
-const jocondeTags = ['@best', '@standard', 'JOCONDE'];
 
 export default class Collector {
   public scanningPath: string;
@@ -56,8 +52,7 @@ export default class Collector {
 
     const allFiles = notHiddenFiles.concat(hiddenFiles);
     const debt = new Debt(this.pricer);
-    const louvre = new Louvre();
-    const codeQualityInformation = new CodeQualityInformation(debt, louvre);
+    const codeQualityInformation = new CodeQualityInformation(debt);
 
     const targetedFiles = allFiles.filter(
       (path: string): boolean => !pathHelper.isFileMatchPathPatternArray(path, this.ignorePaths),
@@ -125,8 +120,7 @@ export default class Collector {
 
   private async collectDebtFromCommit(commit: Commit): Promise<CodeQualityInformationInterface> {
     const debt = new Debt(this.pricer);
-    const louvre = new Louvre();
-    const codeQualityInformation = new CodeQualityInformation(debt, louvre);
+    const codeQualityInformation = new CodeQualityInformation(debt);
     const entries = await this.getFilesFromCommit(commit);
     for (let entry of entries) {
       await this.parseEntry(entry, codeQualityInformation);
@@ -179,14 +173,6 @@ export default class Collector {
         const debtItem = this.parseDebtLine(line, fileName, debtTag);
         if (!this.filter || (this.filter && debtItem.type === this.filter)) {
           codeQualityInformation.debt.addDebtItem(debtItem);
-        }
-      }
-
-      const jocondeTag = this.getTag(line, jocondeTags);
-      if (jocondeTag) {
-        const joconde = this.parseJocondeLine(line, fileName, jocondeTag);
-        if (!this.filter || (this.filter && joconde.type === this.filter)) {
-          codeQualityInformation.louvre.addJoconde(joconde);
         }
       }
     }
@@ -253,32 +239,6 @@ export default class Collector {
       isContagious,
       isDangerous,
     });
-  }
-
-  /**
-   * TODO quality "Maximet: parseDebtLine and parseJocondeLine can be refactored"
-   *
-   * @param line
-   * @param fileName
-   * @param tag
-   */
-  private parseJocondeLine(line: string, fileName: string, tag: string): JocondeInterface {
-    const lineWithoutTag = line.substr(line.indexOf(tag) + tag.length + 1);
-
-    const comment = this.parseDebtLineComment(line);
-
-    const lineWithoutDebtAndComment =
-      comment === '' ? lineWithoutTag : lineWithoutTag.substr(0, lineWithoutTag.indexOf('"')).trim();
-
-    // lineElements can be "TYPE" or "TYPE:SUB_TYPE"
-    const lineElements = lineWithoutDebtAndComment.split(' ');
-
-    // Process DEBT_TYPE:SUB_TYPE
-    const types = lineElements[0].split(':');
-    const type = types[0];
-    const category = types[1] ? types[1] : '';
-
-    return new Joconde(type, category, comment, fileName);
   }
 
   /**

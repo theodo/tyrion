@@ -4,6 +4,7 @@ export type ItemInterface = {
   category: string;
   comment: string;
   fileName: string;
+  id: string;
   type: string;
 };
 
@@ -12,7 +13,6 @@ export type DebtItemInterface = ItemInterface & {
   isContagious: boolean;
   isDangerous: boolean;
 };
-export type JocondeInterface = ItemInterface;
 
 export type PricerInterface = {
   getPrice: (debt: DebtItemInterface) => number;
@@ -25,11 +25,6 @@ export type DebtParetoInterface = {
   type: string;
   addDebtItem: (debtItem: DebtItemInterface) => void;
 };
-export type JocondeParetoInterface = {
-  jocondes: JocondeInterface[];
-  type: string;
-  addJoconde: (joconde: JocondeInterface) => void;
-};
 
 export type DebtInterface = {
   debtParetos: Map<string, DebtParetoInterface>;
@@ -40,14 +35,8 @@ export type DebtInterface = {
   getDebtScoreByPrioritization: (prioritizationType: PrioritizationTypes) => number;
 };
 
-export type LouvreInterface = {
-  jocondeParetos: Map<string, JocondeParetoInterface>;
-  addJoconde: (joconde: JocondeInterface) => void;
-};
-
 export type CodeQualityInformationInterface = {
   debt: DebtInterface;
-  louvre: LouvreInterface;
   commitDateTime: Date;
 };
 
