@@ -6,15 +6,15 @@
 ## About the tool
 
 ### Why this tool
-We defined at Theodo quality by the fact that the code:
+We defined at Theodo quality by the "5S quality factor" that the code:
 
- * 🐛 has no bugs
- * 🚧 is easy to maintain / make evolutions
- * 🚀 is fast
- * ⚙️ is scalable
- * 🔒 is secured
+ * 🐛 Stable : has no bugs
+ * 🚧 Sustainable : the code is easy to maintain / make evolutions
+ * 🚀 Speed: is fast
+ * ⚙️ Scalable: is scalable
+ * 🔒 Secured: is secured
 
-To be able to deliver code of high quality, a team needs to:
+We think that a team needs the following to be able to deliver code of high quality:
 
 * 📆 Have enough time
 * 🗹 Know how to do quality
