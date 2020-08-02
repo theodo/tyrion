@@ -1,6 +1,6 @@
 {
   "name": "tyrionl",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "technical debt collector tool",
   "repository": {
     "type": "git",
@@ -13,7 +13,7 @@
   "scripts": {
     "tsc": "tsc",
     "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
-    "exec": "ts-node src/index.ts -e 360 -b master",
+    "exec": "ts-node src/index.ts -e 360",
     "build": "tsc -p . && cp -r src/template/ lib/template/",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -34,7 +34,7 @@
     "figlet": "^1.5.0",
     "glob": "^7.1.6",
     "lodash": "^4.17.11",
-    "nodegit": "^0.27.0",
+    "nodegit": "^0.26.5",
     "open": "^6.4.0",
     "path": "^0.12.7"
   },
