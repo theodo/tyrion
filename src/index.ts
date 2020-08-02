@@ -14,11 +14,13 @@ import CodeQualityInformation from './model/codeQualityInformation';
 import CodeQualityInformationHistory from './model/codeQualityInformationHistory';
 
 const HISTORY_DEFAULT_NUMBER_OF_DAYS = 28;
+const DEFAULT_BRANCH = 'master';
 
 program
   .description('A debt collector from human comments in the code')
   .option('-p, --path [scanDirectory]', 'The path of the directory you want to analyse')
   .option('-e, --evolution [days]', 'Get the evolution of the debt since X days')
+  .option('-b, --branch [days]', 'Specify the branch used for the evolution. (Default to master)')
   .option('-f, --filter [type]', 'Get the files that are concerned by a particular debt type')
   .option('-n, --nobrowser [browser]', "Don't open the report after being generated");
 
@@ -32,7 +34,7 @@ program.parse(process.argv);
 let scanDirectory = program.path;
 
 if (!scanDirectory) {
-  console.warn(colors.red('⚠ No path was specified using the -p options. Tyrion will scan the current directory ⚠'));
+  console.warn(colors.yellow('⚠ No path was specified using the -p options. Tyrion will scan the current directory ⚠'));
   scanDirectory = '.';
 }
 
@@ -43,8 +45,9 @@ const collector = Collector.createFromConfig(scanDirectory, program.filter, conf
 switch (true) {
   case Boolean(program.evolution):
     const historyNumberOfDays = isNaN(parseInt(program.evolution)) ? HISTORY_DEFAULT_NUMBER_OF_DAYS : program.evolution;
-    console.info('Tyrion will scan ' + historyNumberOfDays + ' days backward from the last commit on master');
-    const codeQualityInformationHistory = collector.collectHistory(historyNumberOfDays);
+    const branchName = typeof program.branch === 'string' ? program.branch : DEFAULT_BRANCH;
+    console.info('Tyrion will scan ' + historyNumberOfDays + ' days backward from the last commit on ' + branchName);
+    const codeQualityInformationHistory = collector.collectHistory(historyNumberOfDays, branchName);
 
     codeQualityInformationHistory
       .then((codeQualityInformationHistory: CodeQualityInformationHistory): void => {

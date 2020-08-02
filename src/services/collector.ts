@@ -70,22 +70,30 @@ export default class Collector {
     return codeQualityInformation;
   }
 
-  public async collectHistory(historyNumberOfDays: number): Promise<CodeQualityInformationHistoryInterface> {
+  public async collectHistory(
+    historyNumberOfDays: number,
+    branchName: string,
+  ): Promise<CodeQualityInformationHistoryInterface> {
     const codeQualityInformationHistory = new CodeQualityInformationHistory();
 
     const gitPath = pathHelper.getGitRepositoryPath(this.scanningPath);
     const repository = await nodeGit.Repository.open(gitPath);
-    const firstCommitOnMaster = await repository.getMasterCommit();
-    const history = firstCommitOnMaster.history();
-    const commits = await this.getRelevantCommit(firstCommitOnMaster, history, historyNumberOfDays);
 
-    for (let commit of commits) {
-      const codeQualityInformation = await this.collectDebtFromCommit(commit);
-      codeQualityInformation.commitDateTime = commit.date();
-      codeQualityInformationHistory.addCodeQualityInformation(codeQualityInformation);
+    try {
+      const lastCommit = await repository.getBranchCommit(branchName);
+      const history = lastCommit.history();
+      const commits = await this.getRelevantCommit(lastCommit, history, historyNumberOfDays);
+
+      for (let commit of commits) {
+        const codeQualityInformation = await this.collectDebtFromCommit(commit);
+        codeQualityInformation.commitDateTime = commit.date();
+        codeQualityInformationHistory.addCodeQualityInformation(codeQualityInformation);
+      }
+
+      return codeQualityInformationHistory;
+    } catch (e) {
+      throw new Error("The branch '" + branchName + "' was not found in this repository");
     }
-
-    return codeQualityInformationHistory;
   }
 
   //TODO quality "Maximet: put the function navigating through the git history in a service"
