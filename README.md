@@ -51,8 +51,9 @@ Run `tyrion` with the following options
 ````
   -p, --path [scanDirectory]  The path of the directory you want to analyse
   -e, --evolution [days]      Get the evolution of the debt since X days
-  -f, --filter [type]         filter by a particular debt type
-  -n, --nobrowser [type]      Don't open the report after being generated
+  -b, --branch [days]         Specify the branch used for the evolution. (Default to master)
+  -f, --filter [type]         Get the files that are concerned by a particular debt type
+  -n, --nobrowser [browser]   Don't open the report after being generated
   -h, --help                  output usage information
 ````
 
@@ -60,6 +61,7 @@ Example:
 
 - `tyrion -p ./src` to get the current debt score
 - `tyrion --evolution 28 -p .` to get the evolution of the debt during 28 days starting from the last commit.
+- `tyrion --evolution 28 -b prod -p .` to get the evolution of the debt during 28 days starting from the last commit of the **prod** branch.
 
 ## Writing debt comment
 
