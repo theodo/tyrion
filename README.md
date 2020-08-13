@@ -52,8 +52,8 @@ Run `tyrion` with the following options
   -p, --path [scanDirectory]  The path of the directory you want to analyse
   -e, --evolution [days]      Get the evolution of the debt since X days
   -b, --branch [days]         Specify the branch used for the evolution. (Default to master)
-  -f, --filter [type]         Get the files that are concerned by a particular debt type
   -n, --nobrowser [browser]   Don't open the report after being generated
+  -d, --devs [devs]           Get information about who is contributing the most to quality (Beta)
   -h, --help                  output usage information
 ````
 
@@ -146,14 +146,6 @@ You can use either the following tag for the same result: `@best`, `@standard`, 
 
 Example: `// JOCONDE React:component "The standard can be find here: http....."`
 
-## Filtering
-
-You can filter the result by any type of debt you want with the option `--filter`.
-It will compare the type and the string you pass as an argument after filter.
-
-Example: `tyrion -p ./src --filter bug`
-
-
 ## Ignore paths
 
 You can ignore files containing certain strings by using the `"ignorePath"` option in the config file:
@@ -164,11 +156,12 @@ You can ignore files containing certain strings by using the `"ignorePath"` opti
 ]
 ```
 
-## Contribute
+## Filtering [DEPRECATED]
 
-1. Install the dependencies `npm i`
-2. Run `npm start` during development to see your last changes in action.
+You can filter the result by any type of debt you want with the option `--filter`.
+It will compare the type and the string you pass as an argument after filter.
 
+Example: `tyrion -p ./src --filter bug`
 
 ## License
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Ftheodo%2Ftyrion.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Ftheodo%2Ftyrion?ref=badge_large)

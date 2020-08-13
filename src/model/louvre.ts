@@ -18,4 +18,12 @@ export default class Louvre implements LouvreInterface {
       this.jocondeParetos.set(joconde.type, jocondePareto);
     }
   }
+
+  public collectFromLouvre(louvre: Louvre): void {
+    for (const jocondePareto of louvre.jocondeParetos.values()) {
+      for (const joconde of jocondePareto.jocondes.values()) {
+        this.addJoconde(joconde);
+      }
+    }
+  }
 }

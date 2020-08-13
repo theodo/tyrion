@@ -1,3 +1,5 @@
+import DebtPareto from './debtPareto';
+
 export type PrioritizationTypes = 'isCritical' | 'isDangerous' | 'isContagious' | 'isIdle';
 
 export type ItemInterface = {
@@ -8,23 +10,11 @@ export type ItemInterface = {
 };
 
 export type DebtItemInterface = ItemInterface & {
-  price?: number;
   isContagious: boolean;
   isDangerous: boolean;
 };
 export type JocondeInterface = ItemInterface;
 
-export type PricerInterface = {
-  getPrice: (debt: DebtItemInterface) => number;
-};
-
-export type DebtParetoInterface = {
-  debtItems: DebtItemInterface[];
-  debtScore: number;
-  debtScoreByPrioritization: { [prioritizationType in PrioritizationTypes]: number };
-  type: string;
-  addDebtItem: (debtItem: DebtItemInterface) => void;
-};
 export type JocondeParetoInterface = {
   jocondes: JocondeInterface[];
   type: string;
@@ -32,23 +22,22 @@ export type JocondeParetoInterface = {
 };
 
 export type DebtInterface = {
-  debtParetos: Map<string, DebtParetoInterface>;
-  debtScore: number;
-  pricer: PricerInterface;
+  debtParetos: Map<string, DebtPareto>;
   addDebtItem: (debtItem: DebtItemInterface) => void;
-  getDebtScoreByType: (type: string) => number;
-  getDebtScoreByPrioritization: (prioritizationType: PrioritizationTypes) => number;
+  collectFromDebt: (debt: DebtInterface) => void;
 };
 
 export type LouvreInterface = {
   jocondeParetos: Map<string, JocondeParetoInterface>;
   addJoconde: (joconde: JocondeInterface) => void;
+  collectFromLouvre: (louvre: LouvreInterface) => void;
 };
 
 export type CodeQualityInformationInterface = {
   debt: DebtInterface;
   louvre: LouvreInterface;
   commitDateTime: Date;
+  collectFromCodeQualityInformation: (codeQualityInformation: CodeQualityInformationInterface) => void;
 };
 
 export type CodeQualityInformationHistoryInterface = {
@@ -64,4 +53,16 @@ export type ConfigInterface = {
   prices: PricesInterface;
   standard: number;
   ignorePaths: string[];
+};
+
+export type DeveloperInterface = {
+  email: string;
+  scoutScore: number;
+  healerScore: number;
+  addContributions(contributions: ContributionInterface): void;
+};
+
+export type ContributionInterface = {
+  scoutScore: number;
+  healerScore: number;
 };

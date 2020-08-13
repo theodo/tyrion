@@ -1,51 +1,28 @@
-import DebtItem from '../model/debtItem';
-import Debt from '../model/debt';
 import { Commit, TreeEntry } from 'nodegit';
-import { HistoryEventEmitter } from 'nodegit/commit';
-import dateHelper from '../utils/dateHelper';
 import fs from 'fs';
 import glob from 'glob';
 import nodeGit from 'nodegit';
-import isEmpty from 'lodash/isEmpty';
 
-import { Pricer } from './pricer';
+import CommitSelector from './commitSelector';
 import pathHelper from '../utils/pathHelper';
 import CodeQualityInformation from '../model/codeQualityInformation';
-import Louvre from '../model/louvre';
 import CodeQualityInformationHistory from '../model/codeQualityInformationHistory';
-import Joconde from '../model/joconde';
-import {
-  PricerInterface,
-  DebtItemInterface,
-  CodeQualityInformationInterface,
-  CodeQualityInformationHistoryInterface,
-  JocondeInterface,
-  ConfigInterface,
-} from '../model/types';
-
-const debtTags = ['@debt', 'TODO', 'FIXME'];
-const jocondeTags = ['@best', '@standard', 'JOCONDE'];
+import { CodeQualityInformationInterface, ConfigInterface } from '../model/types';
+import Contributions from '../model/Contributions';
+import SyntaxParser from './syntaxParser';
+import ContributionDetector from './contributionDetector';
 
 export default class Collector {
   public scanningPath: string;
-  private readonly pricer: PricerInterface;
-  private readonly filter: string;
   private readonly ignorePaths: string[];
 
-  public constructor(
-    scanningPath: string,
-    ignorePaths: string[] = [],
-    filter: string = '',
-    pricer: PricerInterface = new Pricer(),
-  ) {
+  public constructor(scanningPath: string, ignorePaths: string[] = []) {
     this.scanningPath = scanningPath;
-    this.filter = filter;
-    this.pricer = pricer;
     this.ignorePaths = ignorePaths;
   }
 
-  public static createFromConfig(scanningPath: string, filter: string, config: ConfigInterface): Collector {
-    return new Collector(scanningPath, config.ignorePaths, filter, new Pricer(config.prices));
+  public static createFromConfig(scanningPath: string, config: ConfigInterface): Collector {
+    return new Collector(scanningPath, config.ignorePaths);
   }
 
   public async collect(): Promise<CodeQualityInformationInterface> {
@@ -55,25 +32,21 @@ export default class Collector {
     const hiddenFiles = glob.sync(allHiddenFiles, { nodir: true });
 
     const allFiles = notHiddenFiles.concat(hiddenFiles);
-    const debt = new Debt(this.pricer);
-    const louvre = new Louvre();
-    const codeQualityInformation = new CodeQualityInformation(debt, louvre);
+    const codeQualityInformation = new CodeQualityInformation();
 
     const targetedFiles = allFiles.filter(
       (path: string): boolean => !pathHelper.isFileMatchPathPatternArray(path, this.ignorePaths),
     );
     for (let fileName of targetedFiles) {
       const file = fs.readFileSync(fileName, 'utf-8');
-      this.parseFile(file, fileName, codeQualityInformation);
+      const codeQualityInformationFromFile = SyntaxParser.parseFile(file, fileName);
+      codeQualityInformation.collectFromCodeQualityInformation(codeQualityInformationFromFile);
     }
 
     return codeQualityInformation;
   }
 
-  public async collectHistory(
-    historyNumberOfDays: number,
-    branchName: string,
-  ): Promise<CodeQualityInformationHistoryInterface> {
+  public async collectHistory(historyNumberOfDays: number, branchName: string): Promise<CodeQualityInformationHistory> {
     const codeQualityInformationHistory = new CodeQualityInformationHistory();
 
     const gitPath = pathHelper.getGitRepositoryPath(this.scanningPath);
@@ -81,9 +54,7 @@ export default class Collector {
 
     try {
       const lastCommit = await repository.getBranchCommit(branchName);
-      const history = lastCommit.history();
-      const commits = await this.getRelevantCommit(lastCommit, history, historyNumberOfDays);
-
+      const commits = await CommitSelector.getRelevantCommits(lastCommit, historyNumberOfDays);
       for (let commit of commits) {
         const codeQualityInformation = await this.collectDebtFromCommit(commit);
         codeQualityInformation.commitDateTime = commit.date();
@@ -96,54 +67,37 @@ export default class Collector {
     }
   }
 
-  //TODO quality "Maximet: put the function navigating through the git history in a service"
-  private async getRelevantCommit(
-    firstCommit: Commit,
-    history: HistoryEventEmitter,
-    historyNumberOfDays: number,
-  ): Promise<Commit[]> {
-    return new Promise((resolve): void => {
-      history.on('end', function(commits: Commit[]): void {
-        // We select one commit per day, the first one we meet
-        const startDate = firstCommit.date();
-        const startDateTime = startDate.getTime();
-        // @debt quality:variable "Maximet: We should create a const somewhere"
+  public async collectDevsContributions(historyNumberOfDays: number, branchName: string): Promise<Contributions> {
+    const gitPath = pathHelper.getGitRepositoryPath(this.scanningPath);
+    const repository = await nodeGit.Repository.open(gitPath);
 
-        const NUMBER_OF_DAYS_TO_BUILD_HISTORY = historyNumberOfDays * 24 * 3600000;
-        const endDateTime = startDateTime - NUMBER_OF_DAYS_TO_BUILD_HISTORY;
+    try {
+      const lastCommit = await repository.getBranchCommit(branchName);
+      const commits = await CommitSelector.getAllCommitsAfterADate(lastCommit, historyNumberOfDays);
+      const contributions = new Contributions();
+      for (let commit of commits) {
+        const contribution = await ContributionDetector.detectHealersAndScoutFromCommit(commit);
+        contributions.addContributionFromDeveloper(commit.author().email(), contribution);
+      }
 
-        const relevantCommits = new Map<string, Commit>();
-        for (let commit of commits) {
-          if (commit.date().getTime() < endDateTime) {
-            break;
-          }
-
-          const formattedDate = dateHelper.getDayMonthYearFormat(commit.date());
-          const commitOfTheDay = relevantCommits.get(formattedDate);
-          if (!commitOfTheDay) {
-            relevantCommits.set(formattedDate, commit);
-          }
-        }
-        return resolve(Array.from(relevantCommits.values()));
-      });
-
-      history.start();
-    });
+      return contributions;
+    } catch (e) {
+      throw new Error("The branch '" + branchName + "' was not found in this repository");
+    }
   }
 
   private async collectDebtFromCommit(commit: Commit): Promise<CodeQualityInformationInterface> {
-    const debt = new Debt(this.pricer);
-    const louvre = new Louvre();
-    const codeQualityInformation = new CodeQualityInformation(debt, louvre);
-    const entries = await this.getFilesFromCommit(commit);
-    for (let entry of entries) {
-      await this.parseEntry(entry, codeQualityInformation);
+    const codeQualityInformation = new CodeQualityInformation();
+    const treeEntries = await this.getTreeEntriesFromCommit(commit);
+    for (let entry of treeEntries) {
+      const codeQualityInformationFromEntry = await SyntaxParser.parseEntry(entry);
+      codeQualityInformation.collectFromCodeQualityInformation(codeQualityInformationFromEntry);
     }
 
     return codeQualityInformation;
   }
 
-  private async getFilesFromCommit(commit: Commit): Promise<TreeEntry[]> {
+  private async getTreeEntriesFromCommit(commit: Commit): Promise<TreeEntry[]> {
     return new Promise((resolve): void => {
       const tree = commit.getTree();
       tree.then(function(tree: nodeGit.Tree): void {
@@ -156,159 +110,9 @@ export default class Collector {
         walker.on('end', (): void => {
           return resolve(entryArray);
         });
-        // Don't forget to call `start()`!
+
         walker.start();
       });
     });
-  }
-
-  private async parseEntry(entry: TreeEntry, codeQualityInformation: CodeQualityInformationInterface): Promise<void> {
-    const those = this;
-    return new Promise((resolve): void => {
-      const blob = entry.getBlob();
-      blob
-        .then(function(blob): void {
-          those.parseFile(String(blob), entry.path(), codeQualityInformation);
-          resolve();
-        })
-        .catch((error): void => console.error('Error while parsing the blob of the file', error));
-    });
-  }
-
-  //TODO: quality "Should split this file into multiple files including one service dedicated to the parsing
-  private parseFile(file: string, fileName: string, codeQualityInformation: CodeQualityInformationInterface): void {
-    let lines: string[] = file.split('\n');
-
-    lines = lines.filter((line): boolean => this.isComment(line));
-
-    for (let line of lines) {
-      const debtTag = this.getTag(line, debtTags);
-      if (debtTag) {
-        const debtItem = this.parseDebtLine(line, fileName, debtTag);
-        if (!this.filter || (this.filter && debtItem.type === this.filter)) {
-          codeQualityInformation.debt.addDebtItem(debtItem);
-        }
-      }
-
-      const jocondeTag = this.getTag(line, jocondeTags);
-      if (jocondeTag) {
-        const joconde = this.parseJocondeLine(line, fileName, jocondeTag);
-        if (!this.filter || (this.filter && joconde.type === this.filter)) {
-          codeQualityInformation.louvre.addJoconde(joconde);
-        }
-      }
-    }
-  }
-
-  /**
-   * Check if the line contains a Tag
-   *
-   * @param line
-   * @param tags
-   */
-  private getTag(line: string, tags: string[]): string | undefined {
-    for (let tag of tags) {
-      if (line.indexOf(tag) >= 0) {
-        return tag;
-      }
-    }
-  }
-
-  /**
-   * Check if the line is a comment
-   * @param line
-   */
-  private isComment(line: string): boolean {
-    const lineTrimmed = line.trim();
-    const firstChar = lineTrimmed.charAt(0);
-
-    return firstChar === '#' || firstChar === '*' || firstChar === '/';
-  }
-
-  /**
-   * Parse the different elements in a debt line.
-   * A debt line may have a comment at the end.
-   *
-   * @param line
-   * @param fileName
-   */
-  private parseDebtLine(line: string, fileName: string, debtTag: string): DebtItemInterface {
-    const lineWithoutDebtTag = line.substr(line.indexOf(debtTag) + debtTag.length + 1);
-
-    const comment = this.parseDebtLineComment(line);
-
-    const lineWithoutDebtAndComment =
-      comment === '' ? lineWithoutDebtTag : lineWithoutDebtTag.substr(0, lineWithoutDebtTag.indexOf('"')).trim();
-
-    // lineElements can be "DEBT_TYPE:SUB_TYPE" or "DEBT_TYPE:SUB_TYPE price:PRICE"
-    const lineElements = lineWithoutDebtAndComment.split(' ');
-
-    // Process DEBT_TYPE:SUB_TYPE
-    const types = lineElements[0].split(':');
-    const debtType = types[0] || 'OTHER';
-    const debtCategory = types[1] ? types[1] : '';
-
-    // Process price:PRICE
-    const price = this.getPrice(lineElements);
-    const { isContagious, isDangerous } = this.getDebtPriorization(lineElements);
-
-    return new DebtItem(debtType, debtCategory, comment, fileName, price, isContagious, isDangerous);
-  }
-
-  /**
-   * TODO quality "Maximet: parseDebtLine and parseJocondeLine can be refactored"
-   *
-   * @param line
-   * @param fileName
-   * @param tag
-   */
-  private parseJocondeLine(line: string, fileName: string, tag: string): JocondeInterface {
-    const lineWithoutTag = line.substr(line.indexOf(tag) + tag.length + 1);
-
-    const comment = this.parseDebtLineComment(line);
-
-    const lineWithoutDebtAndComment =
-      comment === '' ? lineWithoutTag : lineWithoutTag.substr(0, lineWithoutTag.indexOf('"')).trim();
-
-    // lineElements can be "TYPE" or "TYPE:SUB_TYPE"
-    const lineElements = lineWithoutDebtAndComment.split(' ');
-
-    // Process DEBT_TYPE:SUB_TYPE
-    const types = lineElements[0].split(':');
-    const type = types[0];
-    const category = types[1] ? types[1] : '';
-
-    return new Joconde(type, category, comment, fileName);
-  }
-
-  /**
-   * Return the comment of a line debt if any.
-   *
-   * @param line . A line without the @debt tag in it, like : bug:error price:50 "awesome comment"
-   */
-  private parseDebtLineComment(line: string): string {
-    const comment = line.substr(line.indexOf('"') + 1);
-    if (comment.indexOf('"') >= 0) {
-      return comment.substr(0, comment.indexOf('"'));
-    }
-    return '';
-  }
-
-  /**
-   * If exists, returns the price from a list of lineElements
-   *
-   * @param lineElements ["DEBT_TYPE:SUB_TYPE", "price:50"] or ["DEBT_TYPE:SUB_TYPE"]
-   */
-  private getPrice(lineElements: string[]): number | undefined {
-    const priceAnnotation = lineElements.filter((lineElement): boolean => lineElement.startsWith('price:'));
-
-    return !isEmpty(priceAnnotation) ? parseInt(priceAnnotation[0].split(':')[1]) : undefined;
-  }
-
-  private getDebtPriorization(lineElements: string[]): { isContagious: boolean; isDangerous: boolean } {
-    const isContagious = lineElements.includes('contagious');
-    const isDangerous = lineElements.includes('dangerous');
-
-    return { isContagious, isDangerous };
   }
 }

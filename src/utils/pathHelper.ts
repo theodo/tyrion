@@ -3,23 +3,6 @@ import path from 'path';
 
 export default class PathHelper {
   /**
-   * This function is used to know if a file matches an array of pattern like ['./src/', 'nodes_modules']
-   * It is used to allow the filtering and ignoring of files
-   *
-   * @param path
-   * @param pathPatterns
-   */
-  public static isFileMatchPathPatternArray(path: string, pathPatterns: string[]): boolean {
-    for (let pathPattern of pathPatterns) {
-      if (this.isFileMatchPathPattern(path, pathPattern)) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  /**
    * This function is used to find where the GIT repository is among the parents directory
    *
    * @param scanningPath
@@ -36,6 +19,23 @@ export default class PathHelper {
     }
 
     throw new Error('No GIT repository was found at ' + path.resolve(scanningPath));
+  }
+
+  /**
+   * This function is used to know if a file matches an array of pattern like ['./src/', 'nodes_modules']
+   * It is used to allow the filtering and ignoring of files
+   *
+   * @param path
+   * @param pathPatterns
+   */
+  public static isFileMatchPathPatternArray(path: string, pathPatterns: string[]): boolean {
+    for (let pathPattern of pathPatterns) {
+      if (this.isFileMatchPathPattern(path, pathPattern)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   /**
