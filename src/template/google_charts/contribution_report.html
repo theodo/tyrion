@@ -1,0 +1,32 @@
+<html>
+<head>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript">
+    google.charts.load('current', {packages: ['corechart', 'bar']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    const debtData =  [
+        ["Email","Scout Score", "Healer Score"],
+        <% developers.forEach(function(developer) { %>["<%- developer.email %>",
+          <%- developer.scoutScore %>,
+          <%- developer.healerScore %>],
+        <% }); %>
+    ];
+
+    function drawChart() {
+      var data = google.visualization.arrayToDataTable(debtData);
+      var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+      chart.draw(data, {
+        isStacked: false,
+        series: {
+          0: { color: 'blue' }, // red
+          1: { color: 'green' }, // orange
+        },
+      });
+    }
+  </script>
+</head>
+<body>
+<div id="chart_div" style="width: 1400px; height: 600px"></div>
+</body>
+</html>

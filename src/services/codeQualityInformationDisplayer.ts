@@ -2,18 +2,19 @@ import Table from 'cli-table';
 import colors from 'colors';
 import {
   DebtItemInterface,
-  DebtParetoInterface,
   CodeQualityInformationInterface,
   DebtInterface,
   LouvreInterface,
   JocondeParetoInterface,
   JocondeInterface,
 } from '../model/types';
+import Pricer from './pricer';
+import DebtPareto from '../model/debtPareto';
 
 export default class CodeQualityInformationDisplayer {
-  public static display(codeQualityInformation: CodeQualityInformationInterface): void {
+  public static display(codeQualityInformation: CodeQualityInformationInterface, pricer: Pricer): void {
     if (codeQualityInformation.debt) {
-      this.displayDebtSummary(codeQualityInformation.debt);
+      this.displayDebtSummary(codeQualityInformation.debt, pricer);
     }
 
     if (codeQualityInformation.louvre) {
@@ -21,7 +22,7 @@ export default class CodeQualityInformationDisplayer {
     }
   }
 
-  private static displayDebtSummary(debt: DebtInterface): void {
+  private static displayDebtSummary(debt: DebtInterface, pricer: Pricer): void {
     let totalItems = 0;
     console.info(colors.green('\n ♻️♻️♻️ Debt Information ♻️♻️♻️'));
 
@@ -29,17 +30,17 @@ export default class CodeQualityInformationDisplayer {
       head: [colors.bold('Type'), colors.bold('Score'), colors.bold('File'), colors.bold('Comment')],
     });
 
-    debt.debtParetos.forEach((debtPareto: DebtParetoInterface): void => {
+    debt.debtParetos.forEach((debtPareto: DebtPareto): void => {
       const debtItemsNumber = debtPareto.debtItems.length;
       debtPareto.debtItems.map((debtItem: DebtItemInterface): void => {
-        table.push([debtItem.type, debt.pricer.getPrice(debtItem), debtItem.fileName, debtItem.comment]);
+        table.push([debtItem.type, pricer.getPriceFromDebtItem(debtItem), debtItem.fileName, debtItem.comment]);
       });
       totalItems += debtItemsNumber;
     });
 
     table.push([
       colors.red(colors.bold('Total')),
-      colors.red(colors.bold('' + debt.debtScore)),
+      colors.red(colors.bold('' + pricer.getDebtScoreFromDebt(debt))),
       colors.red(colors.bold(totalItems + ' debt items')),
     ]);
 

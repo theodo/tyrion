@@ -1,12 +1,19 @@
-import { DebtInterface, LouvreInterface, CodeQualityInformationInterface } from './types';
+import { CodeQualityInformationInterface } from './types';
+import Louvre from './louvre';
+import Debt from './debt';
 
 export default class CodeQualityInformation implements CodeQualityInformationInterface {
-  public debt: DebtInterface;
-  public louvre: LouvreInterface;
+  public debt: Debt;
+  public louvre: Louvre;
   public commitDateTime: Date = new Date();
 
-  public constructor(debt: DebtInterface, louvre: LouvreInterface) {
-    this.debt = debt;
-    this.louvre = louvre;
+  public constructor() {
+    this.debt = new Debt();
+    this.louvre = new Louvre();
+  }
+
+  public collectFromCodeQualityInformation(codeQualityInformation: CodeQualityInformation): void {
+    this.debt.collectFromDebt(codeQualityInformation.debt);
+    this.louvre.collectFromLouvre(codeQualityInformation.louvre);
   }
 }

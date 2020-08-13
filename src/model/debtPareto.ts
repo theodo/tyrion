@@ -1,4 +1,4 @@
-import { PricerInterface, DebtItemInterface, PrioritizationTypes, DebtParetoInterface } from './types';
+import { DebtItemInterface, PrioritizationTypes } from './types';
 
 export const PRIORITIZATION_TYPES: { [prioritizationType: string]: PrioritizationTypes } = {
   IS_CRITICAL: 'isCritical',
@@ -7,35 +7,20 @@ export const PRIORITIZATION_TYPES: { [prioritizationType: string]: Prioritizatio
   IS_IDLE: 'isIdle',
 };
 
-export default class DebtPareto implements DebtParetoInterface {
+export default class DebtPareto {
   public debtItems: DebtItemInterface[];
   public type: string;
 
-  public debtScore: number;
-  public debtScoreByPrioritization: { [prioritizationType in PrioritizationTypes]: number };
-  private pricer: PricerInterface;
-
-  public constructor(type: string, pricer: PricerInterface) {
+  public constructor(type: string) {
     this.type = type;
     this.debtItems = new Array<DebtItemInterface>();
-    this.debtScore = 0;
-    this.debtScoreByPrioritization = {
-      isCritical: 0,
-      isDangerous: 0,
-      isContagious: 0,
-      isIdle: 0,
-    };
-    this.pricer = pricer;
   }
 
   public addDebtItem(debtItem: DebtItemInterface): void {
     this.debtItems.push(debtItem);
-    const debtScore = this.pricer.getPrice(debtItem);
-    this.debtScore += debtScore;
-    this.debtScoreByPrioritization[DebtPareto.getPrioritizationType(debtItem)] += debtScore;
   }
 
-  private static getPrioritizationType({ isContagious, isDangerous }: DebtItemInterface): PrioritizationTypes {
+  public static getPrioritizationType({ isContagious, isDangerous }: DebtItemInterface): PrioritizationTypes {
     switch (true) {
       case isContagious && isDangerous:
         return PRIORITIZATION_TYPES.IS_CRITICAL;

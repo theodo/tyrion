@@ -35,6 +35,7 @@ export default class Config implements ConfigInterface {
 
     this.prices = this.config.pricer;
     this.standard = this.config.standard;
+    //TODO bug "When an ignorePath is specified inside a non root directory then the ignorepath is the wrong one
     this.ignorePaths = this.config.ignorePath;
   }
 }

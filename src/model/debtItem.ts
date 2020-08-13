@@ -5,7 +5,6 @@ export default class DebtItem implements DebtItemInterface {
   public category: string;
   public comment: string;
   public fileName: string;
-  public price?: number;
   public isContagious: boolean;
   public isDangerous: boolean;
 
@@ -22,7 +21,6 @@ export default class DebtItem implements DebtItemInterface {
     this.category = category;
     this.comment = comment;
     this.fileName = fileName;
-    this.price = price;
     this.isContagious = isContagious;
     this.isDangerous = isDangerous;
   }
