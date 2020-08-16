@@ -6,12 +6,10 @@
 ## About the tool
 
 ### Why this tool
-We defined at Theodo quality by the "5S quality factor" that the code:
+We defined at Theodo quality by the "3S quality factor" that the code:
 
- * 🐛 Stable : has no bugs
- * 🚧 Sustainable : the code is easy to maintain / make evolutions
- * 🚀 Speed: is fast
- * ⚙️ Scalable: is scalable
+ * 🐛 Stable : has no bugs and the code is easy to maintain
+ * 🚀 Speed: is fast and scalable (speed at scale)
  * 🔒 Secured: is secured
 
 We think that a team needs the following to be able to deliver code of high quality:
@@ -51,15 +49,16 @@ Run `tyrion` with the following options
 ````
   -p, --path [scanDirectory]  The path of the directory you want to analyse
   -e, --evolution [days]      Get the evolution of the debt since X days
-  -b, --branch [days]         Specify the branch used for the evolution. (Default to master)
+  -b, --branch [days]         Specify the branch used for the evolution analysis. (Default to master)
   -n, --nobrowser [browser]   Don't open the report after being generated
+  -c, --csv [csv]             export the debt data into a csv file
   -d, --devs [devs]           Get information about who is contributing the most to quality (Beta)
   -h, --help                  output usage information
 ````
 
 Example:
 
-- `tyrion -p ./src` to get the current debt score
+- `tyrion -p ./src -c` to get the current debt score and create a csv report
 - `tyrion --evolution 28 -p .` to get the evolution of the debt during 28 days starting from the last commit.
 - `tyrion --evolution 28 -b prod -p .` to get the evolution of the debt during 28 days starting from the last commit of the **prod** branch.
 
@@ -156,7 +155,8 @@ You can ignore files containing certain strings by using the `"ignorePath"` opti
 ]
 ```
 
-## Filtering [DEPRECATED]
+## Filtering [REMOVED]
+This function is not available anymore as it wasn't used.
 
 You can filter the result by any type of debt you want with the option `--filter`.
 It will compare the type and the string you pass as an argument after filter.
