@@ -14,6 +14,7 @@ import CodeQualityInformationHistory from './model/codeQualityInformationHistory
 import { CodeQualityInformationInterface } from './model/types';
 import Pricer from './services/pricer';
 import Contributions from './model/Contributions';
+import CSVExporter from './services/csvExporter';
 
 const HISTORY_DEFAULT_NUMBER_OF_DAYS = 28;
 const DEFAULT_BRANCH = 'master';
@@ -24,6 +25,7 @@ program
   .option('-e, --evolution [days]', 'Get the evolution of the debt since X days')
   .option('-b, --branch [days]', 'Specify the branch used for the evolution. (Default to master)')
   .option('-n, --nobrowser [browser]', "Don't open the report after being generated")
+  .option('-c, --csv [csv]', 'export the debt data into a csv file')
   .option('-d, --devs [devs]', 'Get information about who is contributing the most to quality (Beta)');
 
 program.on('--help', function(): void {
@@ -87,6 +89,10 @@ switch (true) {
 
         if (!program.nobrowser) {
           open(reportPath).catch((error): void => console.error(error));
+        }
+
+        if (Boolean(program.csv)) {
+          CSVExporter.generateCSV(codeQualityInformation, pricer);
         }
       })
       .catch((error): void => console.error(error));
