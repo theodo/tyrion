@@ -28,6 +28,25 @@ export default class Pricer {
     return debtGraphData;
   }
 
+  //TODO quality "rename function and variables to use criticity instead of prioritization. It's more easier to understand
+  public getDebtScoreByCriticity(
+    debtParetos: Map<string, DebtPareto>,
+  ): { [prioritizationType in PrioritizationTypes]: number } {
+    const debtScoreByPrioritization = {
+      isCritical: 0,
+      isDangerous: 0,
+      isContagious: 0,
+      isIdle: 0,
+    };
+
+    for (const debtPareto of debtParetos.values()) {
+      for (const debtItem of debtPareto.debtItems.values())
+        debtScoreByPrioritization[DebtPareto.getPrioritizationType(debtItem)] += this.getPriceFromDebtItem(debtItem);
+    }
+
+    return debtScoreByPrioritization;
+  }
+
   /**
    *
    * Get the debt score of one debt item

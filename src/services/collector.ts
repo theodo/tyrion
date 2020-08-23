@@ -54,8 +54,19 @@ export default class Collector {
 
     try {
       const lastCommit = await repository.getBranchCommit(branchName);
+      console.info('Tyrion is selecting commits to be analyzed..');
       const commits = await CommitSelector.getRelevantCommits(lastCommit, historyNumberOfDays);
+      let counter = 0;
       for (let commit of commits) {
+        /* This part of the code is only to provide the user some feedback while the program runs
+            20 and 10 are empiric numbers
+         */
+        if (commits.length > 20 && counter % 10 === 0) {
+          console.info(counter + ' commits has been analyzed out of ' + commits.length);
+        }
+        counter++;
+
+        // The real analysis is done here
         const codeQualityInformation = await this.collectDebtFromCommit(commit);
         codeQualityInformation.commitDateTime = commit.date();
         codeQualityInformationHistory.addCodeQualityInformation(codeQualityInformation);
