@@ -9,6 +9,6 @@ export default class DateHelper {
   }
 
   public static getFrenchDayMonthYearFormat(date: Date): string {
-    return date.getDate() + '-' + date.getMonth() + 1 + '-' + date.getFullYear();
+    return date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear();
   }
 }
