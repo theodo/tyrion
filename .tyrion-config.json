@@ -13,7 +13,7 @@
     "devEnv": 10,
     "outdated": 5
   },
-  "standard": 1000,
+  "standard": 100,
   "ignorePath": [
     "node_modules",
     "README.md"

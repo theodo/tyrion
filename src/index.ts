@@ -38,7 +38,7 @@ program.parse(process.argv);
 let scanDirectory = program.path;
 
 if (!scanDirectory) {
-  console.warn(colors.yellow('⚠ No path was specified using the -p options. Tyrion will scan the current directory ⚠'));
+  console.info(colors.blue('No path was specified using the -p options. Tyrion will scan the current directory'));
   scanDirectory = '.';
 }
 
@@ -74,6 +74,10 @@ switch (true) {
 
           if (!program.nobrowser) {
             open(reportPath).catch((error): void => console.error(error));
+          }
+
+          if (Boolean(program.csv)) {
+            CSVExporter.generateHistoryCSV(codeQualityInformationHistory, pricer, config.standard);
           }
         })
         .catch((error): void => console.error(error));

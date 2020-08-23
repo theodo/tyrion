@@ -1,5 +1,5 @@
 import { Commit } from 'nodegit';
-import dateHelper from '../utils/dateHelper';
+import DateHelper from '../utils/dateHelper';
 
 export default class CommitSelector {
   public static async getRelevantCommits(lastCommit: Commit, historyNumberOfDays: number): Promise<Commit[]> {
@@ -18,7 +18,7 @@ export default class CommitSelector {
             break;
           }
 
-          const formattedDate = dateHelper.getDayMonthYearFormat(commit.date());
+          const formattedDate = DateHelper.getDayMonthYearFormat(commit.date());
           const commitOfTheDay = relevantCommits.get(formattedDate);
 
           // We keep only one commit per day
