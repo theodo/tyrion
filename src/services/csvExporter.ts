@@ -11,12 +11,14 @@ const csvFileName = 'tyrion_report.csv';
 export default class CSVExporter {
   //ADR I didn't use a lib because the tradeoff between adding a lib and rewriting a simple csv function wasn't worth it
   public static generateCSV(codeQualityInformation: CodeQualityInformation, pricer: Pricer): string {
-    let csvString = 'type, file, score, comment\n';
+    let csvString = 'type, category, file, score, comment\n';
 
     for (const debtPareto of codeQualityInformation.debt.debtParetos.values()) {
       for (const debtItem of debtPareto.debtItems.values()) {
         csvString +=
           debtItem.type +
+          ',' +
+          debtItem.category +
           ',' +
           debtItem.fileName +
           ',' +
