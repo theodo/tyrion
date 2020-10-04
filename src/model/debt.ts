@@ -1,5 +1,5 @@
 import DebtPareto from './debtPareto';
-import { DebtItemInterface, DebtInterface } from './types';
+import { DebtInterface, DebtItemInterface } from './types';
 
 export default class Debt implements DebtInterface {
   public debtParetos: Map<string, DebtPareto>;

@@ -15,28 +15,23 @@ export default class CSVExporter {
 
     for (const debtPareto of codeQualityInformation.debt.debtParetos.values()) {
       for (const debtItem of debtPareto.debtItems.values()) {
-        csvString +=
-          debtItem.type +
-          ',' +
-          debtItem.category +
-          ',' +
-          debtItem.fileName +
-          ',' +
-          pricer.getPriceFromDebtItem(debtItem) +
-          ',' +
-          debtItem.comment +
-          '\n';
+        csvString += `
+        ${debtItem.type},
+        ${debtItem.category},
+        ${debtItem.fileName},
+        ${pricer.getPriceFromDebtItem(debtItem)},
+        ${debtItem.comment}
+`;
       }
     }
 
-    csvString += 'Total,,' + pricer.getDebtScoreFromDebt(codeQualityInformation.debt) + ',';
+    csvString += `Total,,${pricer.getDebtScoreFromDebt(codeQualityInformation.debt)},`;
 
     fs.writeFileSync(csvFileName, csvString);
 
     return csvFileName;
   }
 
-  //ADR I didn't use a lib because the tradeoff between adding a lib and rewriting a simple csv function wasn't worth it
   public static generateHistoryCSV(
     codeQualityInformationHistory: CodeQualityInformationHistory,
     pricer: Pricer,
@@ -48,19 +43,13 @@ export default class CSVExporter {
     //TODO: sort by date the results
     for (const codeQualityInformation of codeQualityInformationHistory.codeQualityInformationBag.values()) {
       const priceDebt = pricer.getDebtScoreByCriticity(codeQualityInformation.debt.debtParetos);
-      csvString +=
-        DateHelper.getFrenchDayMonthYearFormat(codeQualityInformation.commitDateTime) +
-        ',' +
-        priceDebt[PRIORITIZATION_TYPES.IS_CRITICAL] +
-        ',' +
-        priceDebt[PRIORITIZATION_TYPES.IS_DANGEROUS] +
-        ',' +
-        priceDebt[PRIORITIZATION_TYPES.IS_CONTAGIOUS] +
-        ',' +
-        priceDebt[PRIORITIZATION_TYPES.IS_IDLE] +
-        ',' +
-        standard +
-        '\n';
+      csvString += `
+      ${DateHelper.getFrenchDayMonthYearFormat(codeQualityInformation.commitDateTime)},
+      ${priceDebt[PRIORITIZATION_TYPES.IS_CRITICAL]},
+      ${priceDebt[PRIORITIZATION_TYPES.IS_DANGEROUS]},
+      ${priceDebt[PRIORITIZATION_TYPES.IS_CONTAGIOUS]},
+      ${priceDebt[PRIORITIZATION_TYPES.IS_IDLE]},
+      ${standard}`;
     }
 
     fs.writeFileSync(csvFileName, csvString);

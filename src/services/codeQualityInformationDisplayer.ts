@@ -1,30 +1,25 @@
 import Table from 'cli-table';
 import colors from 'colors';
 import {
-  DebtItemInterface,
   CodeQualityInformationInterface,
   DebtInterface,
-  LouvreInterface,
-  JocondeParetoInterface,
+  DebtItemInterface,
   JocondeInterface,
+  JocondeParetoInterface,
+  LouvreInterface,
 } from '../model/types';
 import Pricer from './pricer';
 import DebtPareto from '../model/debtPareto';
 
 export default class CodeQualityInformationDisplayer {
   public static display(codeQualityInformation: CodeQualityInformationInterface, pricer: Pricer): void {
-    if (codeQualityInformation.debt) {
-      this.displayDebtSummary(codeQualityInformation.debt, pricer);
-    }
-
-    if (codeQualityInformation.louvre) {
-      this.displayLouvre(codeQualityInformation.louvre);
-    }
+    this.displayDebtSummary(codeQualityInformation.debt, pricer);
+    this.displayLouvre(codeQualityInformation.louvre);
   }
 
   private static displayDebtSummary(debt: DebtInterface, pricer: Pricer): void {
     let totalItems = 0;
-    console.info(colors.green('\n ♻️♻️♻️ Debt Information ♻️♻️♻️'));
+    console.info(colors.green('\n ♻️Debt Information ♻'));
 
     const table = new Table({
       head: [colors.bold('Type'), colors.bold('Score'), colors.bold('File'), colors.bold('Comment')],
@@ -40,8 +35,8 @@ export default class CodeQualityInformationDisplayer {
 
     table.push([
       colors.red(colors.bold('Total')),
-      colors.red(colors.bold('' + pricer.getDebtScoreFromDebt(debt))),
-      colors.red(colors.bold(totalItems + ' debt items')),
+      colors.red(colors.bold(`${pricer.getDebtScoreFromDebt(debt)}`)),
+      colors.red(colors.bold(`${totalItems} debt items`)),
     ]);
 
     console.log(table.toString());
@@ -49,7 +44,7 @@ export default class CodeQualityInformationDisplayer {
 
   private static displayLouvre(louvre: LouvreInterface): void {
     let totalItems = 0;
-    console.info(colors.green('\n 🖼🖼🖼 Quality Information 🖼🖼🖼'));
+    console.info(colors.green('\n 🖼 Quality Information 🖼'));
 
     const table = new Table({
       head: [colors.bold('Type'), colors.bold('File'), colors.bold('Comment')],
@@ -63,8 +58,7 @@ export default class CodeQualityInformationDisplayer {
       totalItems += jocondeNumber;
     });
 
-    table.push([colors.red(colors.bold('Total')), colors.red(colors.bold(totalItems + ' debt items'))]);
-
+    table.push([colors.red(colors.bold('Total')), colors.red(colors.bold(`${totalItems} debt items`))]);
     console.log(table.toString());
   }
 }

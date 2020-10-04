@@ -1,4 +1,4 @@
-import { DebtItemInterface, PricesInterface, PrioritizationTypes } from '../model/types';
+import { DebtItemInterface, PricesInterface, PrioritizationTypes, TypeDebtScorePrioritization } from '../model/types';
 import DebtPareto from '../model/debtPareto';
 import Debt from '../model/debt';
 
@@ -9,15 +9,10 @@ export default class Pricer {
     this.prices = prices;
   }
 
-  public getScoreByTypePrioritized(
-    debtParetos: Map<string, DebtPareto>,
-  ): {
-    type: string;
-    debtScoreByPrioritization: { isCritical: number; isDangerous: number; isContagious: number; isIdle: number };
-  }[] {
+  public getScoreByTypePrioritized(debtParetos: Map<string, DebtPareto>): TypeDebtScorePrioritization[] {
     const debtGraphData = [];
 
-    for (let debtPareto of debtParetos.values()) {
+    for (const debtPareto of debtParetos.values()) {
       const debtGraphDataColumn = {
         type: debtPareto.type,
         debtScoreByPrioritization: this.getScoreByPrioritizationFromDebtPareto(debtPareto),
@@ -40,8 +35,9 @@ export default class Pricer {
     };
 
     for (const debtPareto of debtParetos.values()) {
-      for (const debtItem of debtPareto.debtItems.values())
+      for (const debtItem of debtPareto.debtItems.values()) {
         debtScoreByPrioritization[DebtPareto.getPrioritizationType(debtItem)] += this.getPriceFromDebtItem(debtItem);
+      }
     }
 
     return debtScoreByPrioritization;

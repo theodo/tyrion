@@ -13,6 +13,12 @@ export type DebtItemInterface = ItemInterface & {
   isContagious: boolean;
   isDangerous: boolean;
 };
+
+export type TypeDebtScorePrioritization = {
+  type: string;
+  debtScoreByPrioritization: { isCritical: number; isDangerous: number; isContagious: number; isIdle: number };
+};
+
 export type JocondeInterface = ItemInterface;
 
 export type JocondeParetoInterface = {

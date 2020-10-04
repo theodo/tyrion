@@ -9,18 +9,18 @@ export default class ContributionDetector {
       scoutScore: 0,
     };
 
-    let diffs = await commit.getDiff();
-    for (let diff of diffs) {
-      let patches = await diff.patches();
-      for (let patch of patches) {
-        let hunks = await patch.hunks();
-        for (let oneHunk of hunks) {
+    const diffs = await commit.getDiff();
+    for (const diff of diffs) {
+      const patches = await diff.patches();
+      for (const patch of patches) {
+        const hunks = await patch.hunks();
+        for (const oneHunk of hunks) {
           let lines = await oneHunk.lines();
           lines = lines.filter((line): boolean => SyntaxParser.isComment(line.content()));
-          for (let line of lines) {
+          for (const line of lines) {
             const debtTag = SyntaxParser.getTag(line.content(), SyntaxParser.debtTags);
 
-            if (debtTag) {
+            if (debtTag != null) {
               if (line.newLineno() < 0) {
                 contributionScore.healerScore++;
               }

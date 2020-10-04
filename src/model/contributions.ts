@@ -1,5 +1,5 @@
 import { ContributionInterface, DeveloperInterface } from './types';
-import Developer from './Developer';
+import Developer from './developer';
 
 export default class Contributions {
   public developers: Map<string, DeveloperInterface>;
