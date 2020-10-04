@@ -1,8 +1,8 @@
+import isEmpty from 'lodash/isEmpty';
+import { TreeEntry } from 'nodegit';
 import { DebtItemInterface, JocondeInterface } from '../model/types';
 import DebtItem from '../model/debtItem';
 import Joconde from '../model/joconde';
-import isEmpty from 'lodash/isEmpty';
-import { TreeEntry } from 'nodegit';
 import CodeQualityInformation from '../model/codeQualityInformation';
 
 export default class SyntaxParser {
@@ -15,7 +15,7 @@ export default class SyntaxParser {
   }
 
   public static parseFile(file: string, fileName: string): CodeQualityInformation {
-    let lines: string[] = file.split('\n');
+    const lines: string[] = file.split('\n');
 
     return this.parseLines(lines, fileName);
   }
@@ -24,15 +24,15 @@ export default class SyntaxParser {
     const codeQualityInformation = new CodeQualityInformation();
     const commentLines = this.extractCommentLines(lines);
 
-    for (let line of commentLines) {
+    for (const line of commentLines) {
       const debtTag = SyntaxParser.getTag(line, this.debtTags);
-      if (debtTag) {
+      if (debtTag != null) {
         const debtItem = SyntaxParser.parseDebtLine(line, fileName, debtTag);
         codeQualityInformation.debt.addDebtItem(debtItem);
       }
 
       const jocondeTag = SyntaxParser.getTag(line, this.jocondeTags);
-      if (jocondeTag) {
+      if (jocondeTag != null) {
         const joconde = SyntaxParser.parseJocondeLine(line, fileName, jocondeTag);
         codeQualityInformation.louvre.addJoconde(joconde);
       }
@@ -47,12 +47,9 @@ export default class SyntaxParser {
 
   /**
    * Check if the line contains a Tag
-   *
-   * @param line
-   * @param tags
    */
   public static getTag(line: string, tags: string[]): string | undefined {
-    for (let tag of tags) {
+    for (const tag of tags) {
       if (line.indexOf(tag) >= 0) {
         return tag;
       }
@@ -61,7 +58,6 @@ export default class SyntaxParser {
 
   /**
    * Check if the line is a comment
-   * @param line
    */
   public static isComment(line: string): boolean {
     const lineTrimmed = line.trim();

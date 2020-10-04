@@ -1,4 +1,4 @@
-import { CodeQualityInformationInterface, CodeQualityInformationHistoryInterface } from './types';
+import { CodeQualityInformationHistoryInterface, CodeQualityInformationInterface } from './types';
 
 export default class CodeQualityInformationHistory implements CodeQualityInformationHistoryInterface {
   public codeQualityInformationBag: CodeQualityInformationInterface[];

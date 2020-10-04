@@ -9,7 +9,7 @@ export default class PathHelper {
    */
   public static getGitRepositoryPath(scanningPath: string): string {
     let currentPath = path.resolve(scanningPath);
-    while (currentPath != '/') {
+    while (currentPath !== '/') {
       const gitPath = currentPath + '/.git';
       if (fs.existsSync(gitPath)) {
         return gitPath;
@@ -24,13 +24,10 @@ export default class PathHelper {
   /**
    * This function is used to know if a file matches an array of pattern like ['./src/', 'nodes_modules']
    * It is used to allow the filtering and ignoring of files
-   *
-   * @param path
-   * @param pathPatterns
    */
-  public static isFileMatchPathPatternArray(path: string, pathPatterns: string[]): boolean {
-    for (let pathPattern of pathPatterns) {
-      if (this.isFileMatchPathPattern(path, pathPattern)) {
+  public static isFileMatchPathPatternArray(filePath: string, pathPatterns: string[]): boolean {
+    for (const pathPattern of pathPatterns) {
+      if (this.isFileMatchPathPattern(filePath, pathPattern)) {
         return true;
       }
     }
@@ -40,17 +37,14 @@ export default class PathHelper {
 
   /**
    * This function is used to know if a file matches a pattern like './src/'
-   *
-   * @param path
-   * @param pathPattern
    */
-  private static isFileMatchPathPattern(path: string, pathPattern: string): boolean {
+  private static isFileMatchPathPattern(filePath: string, pathPattern: string): boolean {
     if (pathPattern.indexOf('./') !== 0) {
       pathPattern = './' + pathPattern;
     }
 
     // The only relevant case where the pathPattern can be a file
-    if (path === pathPattern) {
+    if (filePath === pathPattern) {
       return true;
     }
 
@@ -59,6 +53,6 @@ export default class PathHelper {
       pathPattern = pathPattern + '/';
     }
 
-    return path.indexOf(pathPattern) === 0;
+    return filePath.indexOf(pathPattern) === 0;
   }
 }

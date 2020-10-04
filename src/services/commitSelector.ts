@@ -5,7 +5,7 @@ export default class CommitSelector {
   public static async getRelevantCommits(lastCommit: Commit, historyNumberOfDays: number): Promise<Commit[]> {
     const history = lastCommit.history();
     return new Promise((resolve): void => {
-      history.on('end', function(commits: Commit[]): void {
+      history.on('end', function (commits: Commit[]): void {
         // We select one commit per day, the first one we meet
         const startDate = lastCommit.date();
         const startDateTime = startDate.getTime();
@@ -13,7 +13,7 @@ export default class CommitSelector {
         const endDateTime = startDateTime - NUMBER_OF_DAYS_TO_BUILD_HISTORY;
 
         const relevantCommits = new Map<string, Commit>();
-        for (let commit of commits) {
+        for (const commit of commits) {
           if (commit.date().getTime() < endDateTime) {
             break;
           }
@@ -36,7 +36,7 @@ export default class CommitSelector {
   public static async getAllCommitsAfterADate(lastCommit: Commit, historyNumberOfDays: number): Promise<Commit[]> {
     const history = lastCommit.history();
     return new Promise((resolve): void => {
-      history.on('end', function(commits: Commit[]): void {
+      history.on('end', function (commits: Commit[]): void {
         // We select one commit per day, the first one we meet
         const startDate = lastCommit.date();
         const startDateTime = startDate.getTime();
@@ -44,7 +44,7 @@ export default class CommitSelector {
         const endDateTime = startDateTime - NUMBER_OF_DAYS_TO_BUILD_HISTORY;
 
         const relevantCommits = new Array<Commit>();
-        for (let commit of commits) {
+        for (const commit of commits) {
           if (commit.date().getTime() < endDateTime) {
             break;
           }

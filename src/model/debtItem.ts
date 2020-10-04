@@ -14,8 +14,8 @@ export default class DebtItem implements DebtItemInterface {
     comment: string,
     fileName: string,
     price?: number,
-    isContagious: boolean = false,
-    isDangerous: boolean = false,
+    isContagious = false,
+    isDangerous = false,
   ) {
     this.type = type;
     this.category = category;

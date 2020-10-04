@@ -5,22 +5,13 @@ import _ from 'lodash';
 import DateHelper from '../utils/dateHelper';
 import Pricer from './pricer';
 import CodeQualityInformationHistory from '../model/codeQualityInformationHistory';
-import Contributions from '../model/Contributions';
+import Contributions from '../model/contributions';
 import DebtPareto from '../model/debtPareto';
+import { TypeDebtScorePrioritization } from '../model/types';
 
 const reportName = 'tyrion_report.html';
 
 export default class TemplateRenderer {
-  private static renderGraph(template: string, data: {}): string {
-    const compiled = _.template(template.toString());
-    const htmlGraph = compiled(data);
-    const reportPath = path.resolve(reportName);
-
-    fs.writeFileSync(reportPath, htmlGraph);
-
-    return reportPath;
-  }
-
   public static renderHistoryGraph(
     codeQualityInformationHistory: CodeQualityInformationHistory,
     standard: number,
@@ -30,7 +21,7 @@ export default class TemplateRenderer {
 
     const debtGraphData = [];
 
-    for (let codeQualityInformation of codeQualityInformationHistory.codeQualityInformationBag) {
+    for (const codeQualityInformation of codeQualityInformationHistory.codeQualityInformationBag) {
       const debtGraphDataPoint = {
         date: DateHelper.getDateAsHtmlTemplate(codeQualityInformation.commitDateTime),
         debtScore: pricer.getDebtScoreFromDebt(codeQualityInformation.debt),
@@ -59,5 +50,21 @@ export default class TemplateRenderer {
     );
 
     return this.renderGraph(file, contributions);
+  }
+
+  private static renderGraph(
+    template: string,
+    data:
+      | Contributions
+      | { dataDebt: TypeDebtScorePrioritization[] }
+      | { dataDebt: { date: string; debtScore: number }[]; standard: number },
+  ): string {
+    const compiled = _.template(template.toString());
+    const htmlGraph = compiled(data);
+    const reportPath = path.resolve(reportName);
+
+    fs.writeFileSync(reportPath, htmlGraph);
+
+    return reportPath;
   }
 }

@@ -16,21 +16,28 @@ export default class Config implements ConfigInterface {
 
   public constructor(directoryPath: string) {
     const defaultConfigFile = fs.readFileSync(path.resolve(__dirname, '../../.tyrion-config.json'), 'utf-8');
-    const defaultConfig = JSON.parse(defaultConfigFile);
+    const defaultConfig = JSON.parse(defaultConfigFile) as TyrionConfigInterface;
     const projectConfigPath = directoryPath + '/.tyrion-config.json';
 
     if (fs.existsSync(projectConfigPath)) {
       const projectConfigFile = fs.readFileSync(projectConfigPath, 'utf-8');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const projectConfig = JSON.parse(projectConfigFile.toString());
 
-      // Ensure that the prices are numbers and not strings
-      for (let key in projectConfig['pricer']) {
-        projectConfig['pricer'][key] = parseInt(projectConfig['pricer'][key]);
+      if (Object.prototype.hasOwnProperty.call(projectConfig, 'pricer')) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
+        const projectConfigPricer = projectConfig['pricer'];
+        // Ensure that the prices are numbers and not strings
+        for (const key in projectConfigPricer) {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          projectConfigPricer[key] = parseInt(projectConfigPricer[key]);
+        }
       }
 
-      this.config = Object.assign(defaultConfig, projectConfig) as TyrionConfigInterface;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      this.config = Object.assign(defaultConfig, projectConfig);
     } else {
-      this.config = defaultConfig as TyrionConfigInterface;
+      this.config = defaultConfig;
     }
 
     this.prices = this.config.pricer;
