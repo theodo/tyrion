@@ -2,7 +2,7 @@ export default class Logger {
   public constructor(private displayLogs: boolean) {}
   public info(msg: string): void {
     if (this.displayLogs) {
-      () => console.info(msg);
+      console.info(msg);
     }
   }
 

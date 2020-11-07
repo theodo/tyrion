@@ -27,7 +27,7 @@
   "license": "ISC",
   "jest": {
     "setupFiles": [
-      "<rootDir>config.ts"
+      "./src/config.ts"
     ],
     "transform": {
       ".(ts|tsx)": "ts-jest"
