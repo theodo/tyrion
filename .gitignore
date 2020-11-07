@@ -4,4 +4,4 @@ lib/
 v8-*
 tyrion_report.html
 tyrion_report.csv
-
+coverage/

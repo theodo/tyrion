@@ -1,8 +1,8 @@
-import Collector from '../services/collector';
-import { PRIORITIZATION_TYPES } from '../model/debtPareto';
-import Config from '../services/config';
-import Pricer from '../services/pricer';
-import SyntaxParser from '../services/syntaxParser';
+import Collector from '../../services/collector';
+import { PRIORITIZATION_TYPES } from '../../model/debtPareto';
+import Config from '../../services/config';
+import Pricer from '../../services/pricer';
+import SyntaxParser from '../../services/syntaxParser';
 
 describe('collector', (): void => {
   it('should collect the correct debt paretos', () => {
