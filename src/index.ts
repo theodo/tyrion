@@ -10,6 +10,9 @@ import SyntaxParser from './services/syntaxParser';
 import Collector from './services/collector';
 import ProgramProvider from './services/programProvider';
 import Logger from './services/logger';
+import CSVExporter from './services/csvExporter';
+import CodeQualityInformationDisplayer from './services/codeQualityInformationDisplayer';
+import ReportGenerator from './services/reportGenerator';
 
 program
   .description('A debt collector from human comments in the code')
@@ -24,16 +27,19 @@ program.on('--help', function (): void {
   console.log('');
   console.log(chalk.green(figlet.textSync('TYRION', { horizontalLayout: 'full' })));
 });
-
 program.parse(process.argv);
+
 const logger = new Logger(true);
-const programOptions: ProgramOptionsList = program.opts() as ProgramOptionsList;
-const scanDirectory = (programOptions.path as string) ?? '.';
+const programOptionsList: ProgramOptionsList = program.opts() as ProgramOptionsList;
+const scanDirectory = (programOptionsList.path as string) ?? '.';
 const config = new Config(scanDirectory);
 const pricer = new Pricer(config.prices);
 const syntaxParser = new SyntaxParser(config);
 const collector = new Collector(syntaxParser, config, scanDirectory);
+const csvExporter = new CSVExporter(pricer, logger, config, programOptionsList);
+const codeQualityInformationDisplayer = new CodeQualityInformationDisplayer(logger, pricer);
+const reportGenerator = new ReportGenerator(pricer, logger, programOptionsList, config);
 
-const programProvider = new ProgramProvider(collector, pricer, programOptions, config, logger);
-const programOrchestrator = new ProgramOrchestrator(programOptions, programProvider, logger);
+const programProvider = new ProgramProvider(collector, csvExporter, codeQualityInformationDisplayer, reportGenerator);
+const programOrchestrator = new ProgramOrchestrator(programOptionsList, programProvider, logger);
 programOrchestrator.selectAnalysis();

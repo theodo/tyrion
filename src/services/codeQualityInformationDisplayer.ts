@@ -10,16 +10,18 @@ import {
 } from '../model/types';
 import Pricer from './pricer';
 import DebtPareto from '../model/debtPareto';
+import Logger from './logger';
 
 export default class CodeQualityInformationDisplayer {
-  public static display(codeQualityInformation: CodeQualityInformationInterface, pricer: Pricer): void {
-    this.displayDebtSummary(codeQualityInformation.debt, pricer);
+  public constructor(private logger: Logger, private pricer: Pricer) {}
+  public display(codeQualityInformation: CodeQualityInformationInterface): void {
+    this.displayDebtSummary(codeQualityInformation.debt);
     this.displayLouvre(codeQualityInformation.louvre);
   }
 
-  private static displayDebtSummary(debt: DebtInterface, pricer: Pricer): void {
+  private displayDebtSummary(debt: DebtInterface): void {
     let totalItems = 0;
-    console.info(colors.green('\n ♻️Debt Information ♻'));
+    this.logger.info(colors.green('\n ♻️Debt Information ♻'));
 
     const table = new Table({
       head: [colors.bold('Type'), colors.bold('Score'), colors.bold('File'), colors.bold('Comment')],
@@ -28,23 +30,23 @@ export default class CodeQualityInformationDisplayer {
     debt.debtParetos.forEach((debtPareto: DebtPareto): void => {
       const debtItemsNumber = debtPareto.debtItems.length;
       debtPareto.debtItems.map((debtItem: DebtItemInterface): void => {
-        table.push([debtItem.type, pricer.getPriceFromDebtItem(debtItem), debtItem.fileName, debtItem.comment]);
+        table.push([debtItem.type, this.pricer.getPriceFromDebtItem(debtItem), debtItem.fileName, debtItem.comment]);
       });
       totalItems += debtItemsNumber;
     });
 
     table.push([
       colors.red(colors.bold('Total')),
-      colors.red(colors.bold(`${pricer.getDebtScoreFromDebt(debt)}`)),
+      colors.red(colors.bold(`${this.pricer.getDebtScoreFromDebt(debt)}`)),
       colors.red(colors.bold(`${totalItems} debt items`)),
     ]);
 
-    console.log(table.toString());
+    this.logger.log(table.toString());
   }
 
-  private static displayLouvre(louvre: LouvreInterface): void {
+  private displayLouvre(louvre: LouvreInterface): void {
     let totalItems = 0;
-    console.info(colors.green('\n 🖼 Quality Information 🖼'));
+    this.logger.info(colors.green('\n 🖼 Quality Information 🖼'));
 
     const table = new Table({
       head: [colors.bold('Type'), colors.bold('File'), colors.bold('Comment')],
@@ -59,6 +61,6 @@ export default class CodeQualityInformationDisplayer {
     });
 
     table.push([colors.red(colors.bold('Total')), colors.red(colors.bold(`${totalItems} debt items`))]);
-    console.log(table.toString());
+    this.logger.log(table.toString());
   }
 }
