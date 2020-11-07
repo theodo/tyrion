@@ -2,6 +2,7 @@ import Collector from '../services/collector';
 import { PRIORITIZATION_TYPES } from '../model/debtPareto';
 import Config from '../services/config';
 import Pricer from '../services/pricer';
+import SyntaxParser from '../services/syntaxParser';
 
 describe('collector', (): void => {
   it('should collect the correct debt paretos', () => {
@@ -9,8 +10,9 @@ describe('collector', (): void => {
     const defaultConfig = new Config(testProjectPath);
 
     const pricer = new Pricer(defaultConfig.prices);
+    const syntaxParser = new SyntaxParser(defaultConfig);
+    const collector = new Collector(syntaxParser, defaultConfig, testProjectPath);
 
-    const collector = Collector.createFromConfig(testProjectPath, defaultConfig);
     const codeQualityInformation = collector.collect();
     const debt = codeQualityInformation.debt;
     expect(pricer.getDebtScoreFromDebt(debt)).toEqual(224);
