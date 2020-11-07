@@ -7,22 +7,19 @@ import CommitSelector from './commitSelector';
 import pathHelper from '../utils/pathHelper';
 import CodeQualityInformation from '../model/codeQualityInformation';
 import CodeQualityInformationHistory from '../model/codeQualityInformationHistory';
-import { CodeQualityInformationInterface, ConfigInterface } from '../model/types';
+import { CodeQualityInformationInterface } from '../model/types';
 import Contributions from '../model/contributions';
 import SyntaxParser from './syntaxParser';
 import ContributionDetector from './contributionDetector';
+import Config from './config';
 
 export default class Collector {
   public scanningPath: string;
   private readonly ignorePaths: string[];
 
-  public constructor(scanningPath: string, ignorePaths: string[] = []) {
+  public constructor(private syntaxParser: SyntaxParser, private config: Config, scanningPath: string) {
     this.scanningPath = scanningPath;
-    this.ignorePaths = ignorePaths;
-  }
-
-  public static createFromConfig(scanningPath: string, config: ConfigInterface): Collector {
-    return new Collector(scanningPath, config.ignorePaths);
+    this.ignorePaths = config.ignorePaths;
   }
 
   public collect(): CodeQualityInformationInterface {
@@ -39,7 +36,7 @@ export default class Collector {
     );
     for (const fileName of targetedFiles) {
       const file = fs.readFileSync(fileName, 'utf-8');
-      const codeQualityInformationFromFile = SyntaxParser.parseFile(file, fileName);
+      const codeQualityInformationFromFile = this.syntaxParser.parseFile(file, fileName);
       codeQualityInformation.collectFromCodeQualityInformation(codeQualityInformationFromFile);
     }
 
@@ -86,8 +83,9 @@ export default class Collector {
       const lastCommit = await repository.getBranchCommit(branchName);
       const commits = await CommitSelector.getAllCommitsAfterADate(lastCommit, historyNumberOfDays);
       const contributions = new Contributions();
+      const contributionDetector = new ContributionDetector(this.syntaxParser);
       for (const commit of commits) {
-        const contribution = await ContributionDetector.detectHealersAndScoutFromCommit(commit);
+        const contribution = await contributionDetector.detectHealersAndScoutFromCommit(commit);
         contributions.addContributionFromDeveloper(commit.author().email(), contribution);
       }
 
@@ -101,7 +99,7 @@ export default class Collector {
     const codeQualityInformation = new CodeQualityInformation();
     const treeEntries = await this.getTreeEntriesFromCommit(commit);
     for (const entry of treeEntries) {
-      const codeQualityInformationFromEntry = await SyntaxParser.parseEntry(entry);
+      const codeQualityInformationFromEntry = await this.syntaxParser.parseEntry(entry);
       codeQualityInformation.collectFromCodeQualityInformation(codeQualityInformationFromEntry);
     }
 

@@ -59,6 +59,7 @@ export type ConfigInterface = {
   prices: PricesInterface;
   standard: number;
   ignorePaths: string[];
+  debtTags: string[];
 };
 
 export type DeveloperInterface = {

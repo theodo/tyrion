@@ -6,12 +6,14 @@ export interface TyrionConfigInterface {
   pricer: PricesInterface;
   standard: number;
   ignorePath: string[];
+  debtTags: string[];
 }
 
 export default class Config implements ConfigInterface {
   public readonly prices: PricesInterface;
   public readonly standard: number;
   public readonly ignorePaths: string[];
+  public readonly debtTags: string[];
   private readonly config: TyrionConfigInterface;
 
   public constructor(directoryPath: string) {
@@ -38,6 +40,7 @@ export default class Config implements ConfigInterface {
     this.standard = this.config.standard;
     //TODO bug "When an ignorePath is specified inside a non root directory then the ignorepath is the wrong one
     this.ignorePaths = this.config.ignorePath;
+    this.debtTags = this.config.debtTags;
   }
 
   private readConfigFile(filePath: string): TyrionConfigInterface {

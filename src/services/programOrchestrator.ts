@@ -8,6 +8,7 @@ import Pricer from './pricer';
 import Config from './config';
 import Contributions from '../model/contributions';
 import CodeQualityInformationHistory from '../model/codeQualityInformationHistory';
+import SyntaxParser from './syntaxParser';
 
 const HISTORY_DEFAULT_NUMBER_OF_DAYS = 28;
 const DEFAULT_BRANCH = 'master';
@@ -24,7 +25,8 @@ export default class ProgramOrchestrator {
     const scanDirectory = (programOptions.path as string) ?? '.';
     const config = new Config(scanDirectory);
     const pricer = new Pricer(config.prices);
-    const collector = Collector.createFromConfig(scanDirectory, config);
+    const syntaxParser = new SyntaxParser(config);
+    const collector = new Collector(syntaxParser, config, scanDirectory);
 
     if (programOptions.evolution == null) {
       return this.runCurrentStateAnalysis(collector, pricer, programOptions);

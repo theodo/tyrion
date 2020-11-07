@@ -17,5 +17,10 @@
   "ignorePath": [
     "node_modules",
     "README.md"
+  ],
+  "debtTags": [
+    "@debt",
+    "TODO",
+    "FIXME"
   ]
 }
