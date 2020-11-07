@@ -4,6 +4,12 @@ import chalk from 'chalk';
 import figlet from 'figlet';
 import program from 'commander';
 import ProgramOrchestrator, { ProgramOptionsList } from './services/programOrchestrator';
+import Config from './services/config';
+import Pricer from './services/pricer';
+import SyntaxParser from './services/syntaxParser';
+import Collector from './services/collector';
+import ProgramProvider from './services/programProvider';
+import Logger from './services/logger';
 
 program
   .description('A debt collector from human comments in the code')
@@ -20,6 +26,14 @@ program.on('--help', function (): void {
 });
 
 program.parse(process.argv);
-const programOptions: ProgramOptionsList = program.opts();
-const programOrchestrator = new ProgramOrchestrator(programOptions);
-programOrchestrator.analyzeProgramOption();
+const logger = new Logger(true);
+const programOptions: ProgramOptionsList = program.opts() as ProgramOptionsList;
+const scanDirectory = (programOptions.path as string) ?? '.';
+const config = new Config(scanDirectory);
+const pricer = new Pricer(config.prices);
+const syntaxParser = new SyntaxParser(config);
+const collector = new Collector(syntaxParser, config, scanDirectory);
+
+const programProvider = new ProgramProvider(collector, pricer, programOptions, config, logger);
+const programOrchestrator = new ProgramOrchestrator(programOptions, programProvider, logger);
+programOrchestrator.selectAnalysis();
