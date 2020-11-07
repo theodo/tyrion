@@ -21,4 +21,5 @@ program.on('--help', function (): void {
 
 program.parse(process.argv);
 const programOptions: ProgramOptionsList = program.opts();
-ProgramOrchestrator.analyzeProgramOption(programOptions);
+const programOrchestrator = new ProgramOrchestrator(programOptions);
+programOrchestrator.analyzeProgramOption();

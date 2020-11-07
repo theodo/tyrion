@@ -18,39 +18,36 @@ export interface ProgramOptionsList {
 }
 
 export default class ProgramOrchestrator {
-  public static analyzeProgramOption(programOptions: ProgramOptionsList): void {
-    if (programOptions.path == null) {
+  public constructor(private programOptions: ProgramOptionsList) {}
+  public analyzeProgramOption(): void {
+    if (this.programOptions.path == null) {
       console.info(colors.blue('No path was specified using the -p options. Tyrion will scan the current directory'));
     }
-    const scanDirectory = (programOptions.path as string) ?? '.';
+    const scanDirectory = (this.programOptions.path as string) ?? '.';
     const config = new Config(scanDirectory);
     const pricer = new Pricer(config.prices);
     const syntaxParser = new SyntaxParser(config);
     const collector = new Collector(syntaxParser, config, scanDirectory);
 
-    if (programOptions.evolution == null) {
-      return this.runCurrentStateAnalysis(collector, pricer, programOptions);
+    if (this.programOptions.evolution == null) {
+      return this.runCurrentStateAnalysis(collector, pricer, this.programOptions);
     }
 
-    const historyNumberOfDaysInput = parseInt(programOptions.evolution);
+    const historyNumberOfDaysInput = parseInt(this.programOptions.evolution);
     const historyNumberOfDays = Number.isNaN(historyNumberOfDaysInput)
       ? HISTORY_DEFAULT_NUMBER_OF_DAYS
       : historyNumberOfDaysInput;
-    const branchName = typeof programOptions.branch === 'string' ? programOptions.branch : DEFAULT_BRANCH;
+    const branchName = typeof this.programOptions.branch === 'string' ? this.programOptions.branch : DEFAULT_BRANCH;
     console.info(`Tyrion will scan ${historyNumberOfDays} days backward from the last commit on ${branchName}`);
 
-    if (programOptions.devs != null) {
-      return this.analyzeDevsContributions(collector, historyNumberOfDays, branchName, programOptions);
+    if (this.programOptions.devs != null) {
+      return this.analyzeDevsContributions(collector, historyNumberOfDays, branchName, this.programOptions);
     }
 
-    this.analyzeDebtEvolution(collector, historyNumberOfDays, branchName, config, pricer, programOptions);
+    this.analyzeDebtEvolution(collector, historyNumberOfDays, branchName, config, pricer, this.programOptions);
   }
 
-  private static runCurrentStateAnalysis(
-    collector: Collector,
-    pricer: Pricer,
-    programOptions: ProgramOptionsList,
-  ): void {
+  private runCurrentStateAnalysis(collector: Collector, pricer: Pricer, programOptions: ProgramOptionsList): void {
     const codeQualityInformation = collector.collect();
     CodeQualityInformationDisplayer.display(codeQualityInformation, pricer);
     const reportPath = TemplateRenderer.renderTypeParetoGraph(codeQualityInformation.debt.debtParetos, pricer);
@@ -61,7 +58,7 @@ export default class ProgramOrchestrator {
     }
   }
 
-  private static analyzeDebtEvolution(
+  private analyzeDebtEvolution(
     collector: Collector,
     historyNumberOfDays: number,
     branchName: string,
@@ -82,7 +79,7 @@ export default class ProgramOrchestrator {
       .catch((error): void => console.error(error));
   }
 
-  private static analyzeDevsContributions(
+  private analyzeDevsContributions(
     collector: Collector,
     historyNumberOfDays: number,
     branchName: string,
@@ -97,7 +94,7 @@ export default class ProgramOrchestrator {
       });
   }
 
-  private static handleBrowserDisplay(reportPath: string, programOptions: ProgramOptionsList) {
+  private handleBrowserDisplay(reportPath: string, programOptions: ProgramOptionsList) {
     console.log(colors.green('The report was generated at ' + reportPath));
     if (programOptions.nobrowser == null) {
       open(reportPath).catch((error): void => console.error(error));
