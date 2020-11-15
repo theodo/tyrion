@@ -1,6 +1,6 @@
 {
   "name": "tyrionl",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "technical debt collector tool",
   "repository": {
     "type": "git",
@@ -54,7 +54,7 @@
     "figlet": "^1.5.0",
     "glob": "^7.1.6",
     "lodash": "^4.17.11",
-    "nodegit": "0.26.4",
+    "nodegit": "^0.27.0",
     "open": "^6.4.0",
     "path": "^0.12.7"
   },
