@@ -39,7 +39,7 @@ So we created Tyrion. You can now:
 
 ## Installation:
 
-You need to use tyrion with node v12. It is not currently working with superior version mainly because problems with the main tool with use: [NodeGit](https://github.com/nodegit/nodegit).
+You need to use tyrion with node v12 or v14. It is not currently working with superior version mainly because problems with the main tool with use: [NodeGit](https://github.com/nodegit/nodegit).
 
 Install Tyrion globally: `npm i -g tyrionl` (yes, `tyrionl` with a final `l`, it's not a typo).
 
