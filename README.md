@@ -117,25 +117,30 @@ The parser will look for all lines containing '@debt' and starting either by `*`
 You can override the default pricing of debt items by creating a `.tyrion-config.json` file in the root directory of your project. You can even create your own types. Here is the default one:
 ````
 {
-    "pricer": {
-      "bug": 100,
-      "architecture": 100,
-      "bugRisk": 5,
-      "security": 100,
-      "securityRisk": 10,
-      "quality": 5,
-      "test": 5,
-      "doc": 3,
-      "ci": 30,
-      "deploy": 10,
-      "devEnv": 10,
-      "outdated": 5
-    },
-    "standard": 1000,
-    "ignorePath": [
-      "node_modules",
-      "README.md"
-    ]
+  "pricer": {
+    "bug": 100,
+    "architecture": 100,
+    "bugRisk": 5,
+    "security": 100,
+    "securityRisk": 10,
+    "quality": 5,
+    "test": 5,
+    "doc": 3,
+    "ci": 30,
+    "deploy": 10,
+    "devEnv": 10,
+    "outdated": 5
+  },
+  "standard": 100,
+  "ignorePath": [
+    "node_modules",
+    "README.md"
+  ],
+  "debtTags": [
+    "@debt",
+    "TODO",
+    "FIXME"
+  ]
 }
 ````
 
@@ -156,6 +161,17 @@ You can ignore files containing certain strings by using the `"ignorePath"` opti
 ]
 ```
 
+## Change default debt tag
+
+You can change the default debt tags used to detect which comment line should be consider as a debt comment by Tyrion. To do so override the `debtTags` entry in `.tyrion-config.json`:
+```
+  "debtTags": [
+    "@debt",
+    "TODO",
+    "FIXME"
+  ]
+```
+
 ## Filtering [REMOVED]
 This function is not available anymore as it wasn't used.
 
@@ -163,6 +179,3 @@ You can filter the result by any type of debt you want with the option `--filter
 It will compare the type and the string you pass as an argument after filter.
 
 Example: `tyrion -p ./src --filter bug`
-
-## License
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Ftheodo%2Ftyrion.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Ftheodo%2Ftyrion?ref=badge_large)
