@@ -15,7 +15,7 @@ describe('collector', (): void => {
 
     const codeQualityInformation = collector.collect();
     const debt = codeQualityInformation.debt;
-    expect(pricer.getDebtScoreFromDebt(debt)).toEqual(224);
+    expect(pricer.getDebtScoreFromDebt(debt)).toEqual(229);
 
     const scoreByTypePrioritized = pricer.getScoreByTypePrioritized(debt.debtParetos);
 
@@ -27,7 +27,7 @@ describe('collector', (): void => {
 
       if (typeScore.type === 'quality') {
         expect(typeScore.debtScoreByPrioritization[PRIORITIZATION_TYPES.IS_CONTAGIOUS]).toEqual(5);
-        expect(typeScore.debtScoreByPrioritization[PRIORITIZATION_TYPES.IS_IDLE]).toEqual(15);
+        expect(typeScore.debtScoreByPrioritization[PRIORITIZATION_TYPES.IS_IDLE]).toEqual(20);
       }
 
       if (typeScore.type === 'dev-env') {

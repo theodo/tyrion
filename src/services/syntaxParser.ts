@@ -23,8 +23,7 @@ export default class SyntaxParser {
 
   public parseLines(lines: string[], fileName: string): CodeQualityInformation {
     const codeQualityInformation = new CodeQualityInformation();
-    const commentLines = this.extractCommentLines(lines);
-    for (const line of commentLines) {
+    for (const line of lines) {
       const debtTag = this.getDebtTag(line);
       if (debtTag != null) {
         const debtItem = this.parseDebtLine(line, fileName, debtTag);
@@ -39,10 +38,6 @@ export default class SyntaxParser {
     }
 
     return codeQualityInformation;
-  }
-
-  public extractCommentLines(lines: string[]): string[] {
-    return lines.filter((line): boolean => this.isComment(line));
   }
 
   public getDebtTag(line: string): string | undefined {
@@ -65,21 +60,12 @@ export default class SyntaxParser {
   }
 
   /**
-   * Check if the line is a comment
-   */
-  public isComment(line: string): boolean {
-    const lineTrimmed = line.trim();
-    const firstChar = lineTrimmed.charAt(0);
-
-    return firstChar === '#' || firstChar === '*' || firstChar === '/';
-  }
-
-  /**
    * Parse the different elements in a debt line.
    * A debt line may have a comment at the end.
    *
    * @param line
    * @param fileName
+   * @param debtTag
    */
   public parseDebtLine(line: string, fileName: string, debtTag: string): DebtItemInterface {
     const lineWithoutDebtTag = line.substr(line.indexOf(debtTag) + debtTag.length + 1);
