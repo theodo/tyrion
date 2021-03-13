@@ -15,8 +15,7 @@ export default class ContributionDetector {
       for (const patch of patches) {
         const hunks = await patch.hunks();
         for (const oneHunk of hunks) {
-          let lines = await oneHunk.lines();
-          lines = lines.filter((line): boolean => this.syntaxParser.isComment(line.content()));
+          const lines = await oneHunk.lines();
           for (const line of lines) {
             const debtTag = this.syntaxParser.getDebtTag(line.content());
 
